@@ -28,8 +28,8 @@ void main() async {
 
   // تهيئة Supabase
   await Supabase.initialize(
-    url: 'https://mntzacjymnzdxioznpis.supabase.co',
-    anonKey: 'sb_publishable_MVC9Jt6m2Jz4EX6ya5yztw_1b7G_TIF',
+    url: 'https://ieatgqyzhhminsuavsss.supabase.co',
+    anonKey: 'sb_publishable_WFtIIPKgfehm4ZVJM0l27w_6CD21t0v',
   );
 
   await AwesomeNotifications().initialize(
