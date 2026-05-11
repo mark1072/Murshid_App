@@ -44,7 +44,6 @@ class CourseService extends GetxService {
         await supabase.from('enrollments').insert({
           'student_id': userId,
           'course_id': courseId,
-          'enrollment_date': DateTime.now().toIso8601String(),
         });
       }
     } catch (e) {

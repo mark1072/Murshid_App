@@ -31,6 +31,14 @@ class AuthController extends GetxController {
       );
 
       if (res.user != null) {
+        // Create profile immediately after signup
+        await supabase.from('profiles').insert({
+          'id': res.user!.id,
+          'full_name': name,
+          'university_id': uniId,
+          'role': role,
+        });
+
         Get.snackbar("نجاح", "تم إنشاء الحساب بنجاح");
         // Navigate to course selection screen
         Get.offAllNamed(
