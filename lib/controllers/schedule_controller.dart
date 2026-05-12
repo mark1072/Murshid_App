@@ -29,20 +29,28 @@ class ScheduleController extends GetxController {
       final userId = _authController.currentUser.value?.id;
       if (userId == null) return;
 
-      // جلب البيانات مع عمل Join للجداول (Courses & Rooms)
+      // جلب البيانات مباشرة من جدول schedules باستخدام user_id
       final List<dynamic> response = await supabase
           .from('schedules')
-          .select('''
-            *,
-            courses (*),
-            rooms (*)
-          ''')
+          .select('*, courses(id, course_name, course_code), rooms(*)')
           .eq('user_id', userId);
 
       // تحويل البيانات القادمة إلى List من ScheduleModel
-      schedules.value = response
-          .map((item) => ScheduleModel.fromJson(item))
-          .toList();
+      final List<ScheduleModel> all =
+          response.map((item) => ScheduleModel.fromJson(item)).toList();
+
+      // تصفية الجدول ليحتوي على محاضرات اليوم فقط
+      final today = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ][DateTime.now().weekday % 7];
+
+      schedules.value = all.where((s) => s.dayOfWeek == today).toList();
 
       // تحديد المحاضرة القادمة (منطق بسيط للعرض)
       _setUpcomingLecture();

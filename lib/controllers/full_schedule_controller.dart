@@ -20,27 +20,12 @@ class FullScheduleController extends GetxController {
     try {
       isLoading.value = true;
       final userId = authController.currentUser.value!.id;
-      final role = authController.currentUser.value!.role;
 
-      dynamic response;
-
-      if (role == 'student') {
-        // جلب جداول المواد التي سجل فيها الطالب (Enrollments)
-        response = await supabase
-            .from('schedules')
-            .select(
-              '*, courses!inner(course_name, course_code, enrollments!inner(student_id)), rooms(*)',
-            )
-            .eq('courses.enrollments.student_id', userId);
-      } else {
-        // جلب جداول المواد التي يدرسها الدكتور
-        response = await supabase
-            .from('schedules')
-            .select(
-              '*, courses!inner(course_name, course_code, professor_id), rooms(*)',
-            )
-            .eq('courses.professor_id', userId);
-      }
+      // Simple direct query using user_id as per database schema
+      final response = await supabase
+          .from('schedules')
+          .select('*, courses(id, course_name, course_code), rooms(*)')
+          .eq('user_id', userId);
 
       _groupByDay(response);
     } catch (e) {
