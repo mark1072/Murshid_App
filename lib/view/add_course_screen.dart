@@ -64,9 +64,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          'إضافة محاضرة جديدة',
-          style: TextStyle(
+        title: Text(
+          'add_new_lecture'.tr,
+          style: const TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -86,7 +86,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         steps: [
           // Step 1: Course Details
           Step(
-            title: const Text('تفاصيل المقرر'),
+            title: Text('course_details'.tr),
             content: Form(
               key: _formKey,
               child: Column(
@@ -94,25 +94,25 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                   TextFormField(
                     controller: _courseCodeController,
                     decoration: InputDecoration(
-                      labelText: 'رمز المقرر',
+                      labelText: 'course_code'.tr,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       prefixIcon: const Icon(Icons.code),
                     ),
-                    validator: (v) => v!.isEmpty ? 'أدخل رمز المقرر' : null,
+                    validator: (v) => v!.isEmpty ? 'enter_course_code'.tr : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _courseNameController,
                     decoration: InputDecoration(
-                      labelText: 'اسم المقرر',
+                      labelText: 'course_name'.tr,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       prefixIcon: const Icon(Icons.book),
                     ),
-                    validator: (v) => v!.isEmpty ? 'أدخل اسم المقرر' : null,
+                    validator: (v) => v!.isEmpty ? 'enter_course_name'.tr : null,
                   ),
                 ],
               ),
@@ -122,7 +122,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
 
           // Step 2: Room and Time
           Step(
-            title: const Text('القاعة والوقت'),
+            title: Text('room_and_time'.tr),
             content: Column(
               children: [
                 // Room Selection
@@ -133,7 +133,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                   return DropdownButtonFormField<int>(
                     initialValue: _selectedRoomId,
                     decoration: InputDecoration(
-                      labelText: 'اختر القاعة',
+                      labelText: 'select_room'.tr,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -157,7 +157,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                 DropdownButtonFormField<String>(
                   initialValue: _selectedDay,
                   decoration: InputDecoration(
-                    labelText: 'اختر اليوم',
+                    labelText: 'select_day'.tr,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -176,7 +176,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                 TextFormField(
                   controller: _startTimeController,
                   decoration: InputDecoration(
-                    labelText: 'وقت البداية',
+                    labelText: 'start_time'.tr,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -191,7 +191,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                 TextFormField(
                   controller: _endTimeController,
                   decoration: InputDecoration(
-                    labelText: 'وقت النهاية',
+                    labelText: 'end_time'.tr,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -207,7 +207,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
 
           // Step 3: Add Students
           Step(
-            title: const Text('إضافة الطلاب'),
+            title: Text('add_students'.tr),
             content: Obx(() {
               if (studentService.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -218,7 +218,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      'عدد الطلاب المختارين: ${_selectedStudentIds.length}',
+                      '${'selected_students_count'.tr} ${_selectedStudentIds.length}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
@@ -287,15 +287,15 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
           _endTimeController.text.isNotEmpty) {
         setState(() => _currentStep.value++);
       } else {
-        Get.snackbar('تحذير', 'يجب ملء جميع الحقول');
+        Get.snackbar('warning'.tr, 'fill_all_fields'.tr);
       }
     } else if (_currentStep.value == 2) {
       // Final step - Create course and schedule
       // if no students selected, show message you shouldd select at least one student
       if (_selectedStudentIds.isEmpty) {
         Get.snackbar(
-          'تحذير',
-          'يجب اختيار طالب واحد على الأقل',
+          'warning'.tr,
+          'select_at_least_one_student'.tr,
           backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
@@ -315,7 +315,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
       );
 
       if (courseId == null) {
-        Get.snackbar('خطأ', 'فشل إنشاء المقرر');
+        Get.snackbar('error'.tr, 'course_creation_failed'.tr);
         return;
       }
 
@@ -330,7 +330,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
       );
 
       if (scheduleId == null) {
-        Get.snackbar('خطأ', 'فشل إنشاء الجدول');
+        Get.snackbar('error'.tr, 'schedule_creation_failed'.tr);
         return;
       }
 
@@ -343,8 +343,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
       }
 
       Get.snackbar(
-        'نجاح',
-        'تم إنشاء المحاضرة بنجاح',
+        'success'.tr,
+        'course_created_success'.tr,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
@@ -352,7 +352,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
       Get.back();
     } catch (e) {
       debugPrint('===== \nError in course creation flow: $e');
-      Get.snackbar('خطأ', 'حدث خطأ: $e');
+      Get.snackbar('error'.tr, '${'error_occurred'.tr} $e');
     }
   }
 }

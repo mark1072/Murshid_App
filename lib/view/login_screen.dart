@@ -7,6 +7,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_theme.dart';
 import '../constants/app_sizes.dart';
 import '../controllers/auth_controller.dart';
+import '../core/widgets/language_toggle.dart';
 import 'widgets/custom_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'مرحباً بك في مرشد',
+                        'welcome_to_murshid'.tr,
                         style: AppTheme.headingLarge.copyWith(
                           color: AppColors.accent,
                           fontSize: 32,
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'مساعد ذكي للجامعة',
+                        'smart_university_assistant'.tr,
                         style: AppTheme.bodyMedium.copyWith(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 14,
@@ -116,27 +117,27 @@ class _LoginScreenState extends State<LoginScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('تسجيل الدخول', style: AppTheme.headingMedium),
+                      Text('login_title'.tr, style: AppTheme.headingMedium),
                       const SizedBox(height: 8),
                       Text(
-                        'الرجاء إدخال بيانات دخولك',
+                        'enter_credentials'.tr,
                         style: AppTheme.bodySmall,
                       ),
                       const SizedBox(height: 28),
 
                       // Email Field
                       CustomTextField(
-                        label: 'البريد الإلكتروني',
-                        hint: 'example@murshid.com',
+                        label: 'email'.tr,
+                        hint: 'email_hint'.tr,
                         controller: emailController,
                         prefixIcon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال البريد الإلكتروني';
+                            return 'please_enter_email'.tr;
                           }
                           if (!GetUtils.isEmail(value)) {
-                            return 'الرجاء إدخال بريد إلكتروني صحيح';
+                            return 'please_enter_valid_email'.tr;
                           }
                           return null;
                         },
@@ -144,17 +145,17 @@ class _LoginScreenState extends State<LoginScreen>
 
                       // Password Field
                       CustomTextField(
-                        label: 'كلمة المرور',
-                        hint: '••••••••',
+                        label: 'password'.tr,
+                        hint: 'password_hint'.tr,
                         controller: passwordController,
                         prefixIcon: Icons.lock_outlined,
                         isPassword: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'الرجاء إدخال كلمة المرور';
+                            return 'please_enter_password'.tr;
                           }
                           if (value.length < 6) {
-                            return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                            return 'password_min_length'.tr;
                           }
                           return null;
                         },
@@ -165,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen>
                       // Login Button
                       Obx(
                         () => CustomButton(
-                          label: 'تسجيل الدخول',
+                          label: 'login'.tr,
                           isLoading: authController.isLoading.value,
                           onPressed: () {
                             if (emailController.text.isNotEmpty &&
@@ -176,8 +177,8 @@ class _LoginScreenState extends State<LoginScreen>
                               );
                             } else {
                               Get.snackbar(
-                                'خطأ',
-                                'الرجاء ملء جميع الحقول',
+                                'error'.tr,
+                                'please_fill_all_fields'.tr,
                                 snackPosition: SnackPosition.BOTTOM,
                                 backgroundColor: AppColors.error,
                                 colorText: Colors.white,
@@ -193,11 +194,11 @@ class _LoginScreenState extends State<LoginScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('ليس لديك حساب؟ ', style: AppTheme.bodySmall),
+                          Text('no_account'.tr, style: AppTheme.bodySmall),
                           GestureDetector(
                             onTap: () => Get.toNamed('/signup'),
                             child: Text(
-                              'سجل الآن',
+                              'register_now'.tr,
                               style: AppTheme.bodyMedium.copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
@@ -208,7 +209,9 @@ class _LoginScreenState extends State<LoginScreen>
                         ],
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 24),
+                      const Center(child: LanguageToggle()),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

@@ -33,7 +33,7 @@ class _CourseSelectionScreenState extends State<CourseSelectionScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          widget.role == 'student' ? 'اختر المقررات' : 'اختر المقررات للتدريس',
+          widget.role == 'student' ? 'select_courses'.tr : 'select_courses_to_teach'.tr,
           style: const TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class _CourseSelectionScreenState extends State<CourseSelectionScreen> {
         }
 
         if (courseService.courses.isEmpty) {
-          return const Center(child: Text('لا توجد مقررات متاحة'));
+          return Center(child: Text('no_courses_available'.tr));
         }
 
         return Column(
@@ -148,7 +148,7 @@ class _CourseSelectionScreenState extends State<CourseSelectionScreen> {
                     ),
                   ),
                   child: Text(
-                    'تأكيد الاختيار (${selectedCourses.length})',
+                    '${'confirm_selection'.tr} (${selectedCourses.length})',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -179,8 +179,8 @@ class _CourseSelectionScreenState extends State<CourseSelectionScreen> {
       }
 
       Get.snackbar(
-        'نجاح',
-        'تم حفظ اختيارك بنجاح',
+        'success'.tr,
+        'selection_saved'.tr,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
@@ -193,8 +193,8 @@ class _CourseSelectionScreenState extends State<CourseSelectionScreen> {
       }
     } catch (e) {
       Get.snackbar(
-        'خطأ',
-        'فشل حفظ الاختيار: $e',
+        'error'.tr,
+        '${'selection_failed'.tr} $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
