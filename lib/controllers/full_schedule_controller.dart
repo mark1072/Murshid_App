@@ -11,8 +11,8 @@ class FullScheduleController extends GetxController {
       <String, List<dynamic>>{}.obs; // تجميع البيانات حسب اليوم
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     fetchFullSchedule();
   }
 

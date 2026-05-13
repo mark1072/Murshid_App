@@ -22,7 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomAppBar(title: "مركز التنبيهات", showBackButton: false),
+      appBar: CustomAppBar(title: "مركز التنبيهات"),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(

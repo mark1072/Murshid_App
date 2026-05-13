@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musrshid_app/constants/app_colors.dart';
+import 'package:musrshid_app/controllers/auth_controller.dart';
+import 'package:musrshid_app/models/user_model.dart';
 import 'package:musrshid_app/services/connectivity_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -102,14 +104,23 @@ class _SplashScreenState extends State<SplashScreen>
     }
 
     try {
-      // GET USER ROLE FROM DATABASE
+      // GET USER PROFILE FROM DATABASE
       final response = await supabase
           .from('profiles')
-          .select('role')
+          .select('id, full_name, university_id, role')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
-      final role = response['role'];
+      if (response == null) {
+        Get.offAllNamed('/login');
+        return;
+      }
+
+      final profile = response;
+      final authController = Get.find<AuthController>();
+      authController.currentUser.value = UserModel.fromJson(profile);
+
+      final role = profile['role'];
 
       // NAVIGATE BASED ON ROLE
       if (role == 'professor') {

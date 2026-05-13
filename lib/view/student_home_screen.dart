@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musrshid_app/services/storage_service.dart';
 import '../../controllers/schedule_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
@@ -19,13 +20,14 @@ class StudentHomeScreen extends StatefulWidget {
 class _StudentHomeScreenState extends State<StudentHomeScreen> {
   // استدعاء الـ Controller
   final scheduleController = Get.put(ScheduleController());
-  final authController = Get.put(AuthController());
+  final authController = Get.find<AuthController>();
   late ConnectivityService connectivityService;
 
   @override
   void initState() {
     super.initState();
     connectivityService = Get.find<ConnectivityService>();
+    _bindUserData();
 
     // الاستماع لتغييرات الاتصال وعرض الرسائل
     connectivityService.isConnected.listen((isConnected) {
@@ -56,12 +58,34 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   }
 
   // function to store the current user data in storage service
-  // void _storeUserData() async {
-  //   final user = authController.currentUser.value;
-  //   if (user != null) {
-  //     await Get.find<StorageService>().saveUser(user);
-  //   }
-  // }
+  void _storeUserData() async {
+    final user = authController.currentUser.value;
+    if (user != null) {
+      await Get.find<StorageService>().saveUser(user);
+    }
+  }
+
+  void _bindUserData() {
+    // restore cached profile if the auth controller has not been hydrated yet
+    if (authController.currentUser.value == null) {
+      final cachedUser = Get.find<StorageService>().getCachedUser();
+      if (cachedUser != null) {
+        authController.currentUser.value = cachedUser;
+      }
+    }
+
+    // save immediately if user info is already available
+    if (authController.currentUser.value != null) {
+      _storeUserData();
+    }
+
+    // save whenever the authenticated user updates
+    ever(authController.currentUser, (_) {
+      if (authController.currentUser.value != null) {
+        _storeUserData();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

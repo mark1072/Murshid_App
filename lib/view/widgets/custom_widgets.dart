@@ -161,6 +161,7 @@ class CustomCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: AppTheme.cardDecoration.copyWith(
           color: backgroundColor ?? Colors.white,
         ),
