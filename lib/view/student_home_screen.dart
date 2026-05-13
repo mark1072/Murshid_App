@@ -1,11 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-<<<<<<< HEAD
-import 'package:musrshid_app/services/storage_service.dart';
-=======
-import 'package:shared_preferences/shared_preferences.dart';
->>>>>>> 1a3cbe7bbea0f514edbff47394041bf4ea54ef6e
 import '../../controllers/schedule_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
@@ -386,7 +381,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               TextSpan(text: "${'welcome_greeting'.tr} \n"),
               TextSpan(
                 // get user name from auth controller
-                text: authController.currentUser.value?.fullName ?? 'default_student'.tr,
+                text:
+                    authController.currentUser.value?.fullName ??
+                    'default_student'.tr,
 
                 style: TextStyle(color: Colors.blueAccent),
               ),
