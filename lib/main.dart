@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musrshid_app/services/storage_service.dart';
 import 'package:musrshid_app/view/professor_home_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -54,6 +55,10 @@ void main() async {
   Get.put(RoomService(), permanent: true);
   Get.put(StudentManagementService(), permanent: true);
   Get.put(ConnectivityService(), permanent: true);
+  await Get.putAsync<StorageService>(
+    () async => await StorageService().init(),
+    permanent: true,
+  );
 
   final prefs = await SharedPreferences.getInstance();
   final lang = prefs.getString('lang') ?? 'ar';

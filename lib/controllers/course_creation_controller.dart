@@ -78,7 +78,7 @@ class CourseCreationController extends GetxController {
           .from('schedules')
           .select('*')
           .eq('course_id', courseId);
-      print('===== \nExisting schedule check response: $existingSchedule');
+      debugPrint('===== \nExisting schedule check response: $existingSchedule');
       if (existingSchedule.isNotEmpty) {
         final scheduleId = existingSchedule[0]['id'] as int;
         await supabase

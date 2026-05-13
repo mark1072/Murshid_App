@@ -5,11 +5,10 @@ import '../models/user_model.dart';
 class StorageService extends GetxService {
   late GetStorage _storage;
 
-  @override
-  Future<StorageService> onInit() async {
+  Future<StorageService> init() async {
     await GetStorage.init();
     _storage = GetStorage();
-    return super.onInit() as Future<StorageService>;
+    return this;
   }
 
   // Save user data locally
