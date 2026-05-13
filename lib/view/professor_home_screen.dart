@@ -1,5 +1,7 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/app_colors.dart';
 import '../controllers/auth_controller.dart';
@@ -19,9 +21,9 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "بوابة أعضاء هيئة التدريس",
-          style: TextStyle(
+        title: Text(
+          'faculty_portal'.tr,
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -29,14 +31,16 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
         ),
         backgroundColor: AppColors.primary,
         actions: [
-          IconButton(
-            onPressed: () {
-              Get.find<AuthController>().logout();
-              Get.offAllNamed("/login");
-            },
-            icon: const Icon(Icons.logout, color: Colors.white),
-          ),
-        ],
+        // Language switch button
+        _buildLanguageButton(),
+        IconButton(
+          onPressed: () {
+            Get.find<AuthController>().logout();
+            Get.offAllNamed("/login");
+          },
+          icon: const Icon(Icons.logout, color: Colors.white),
+        ),
+      ],
       ),
       body: Obx(
         () => controller.isLoading.value
@@ -69,9 +73,9 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
                         ),
-                        child: const Text(
-                          "تنبيه الطلاب",
-                          style: TextStyle(color: AppColors.primary),
+                        child: Text(
+                          'alert_students'.tr,
+                          style: const TextStyle(color: AppColors.primary),
                         ),
                       ),
                     ),
@@ -89,30 +93,68 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
 
   // نافذة إدخال التنبيه
   void _showNotifyDialog(BuildContext context, String courseName) {
-    final titleController = TextEditingController(text: "تنبيه: $courseName");
+    final titleController = TextEditingController(text: "${'alert_prefix'.tr} $courseName");
     final msgController = TextEditingController();
 
     Get.defaultDialog(
-      title: "إرسال تنبيه سريع",
+      title: 'send_quick_alert'.tr,
       content: Column(
         children: [
           TextField(
             controller: titleController,
-            decoration: const InputDecoration(labelText: "العنوان"),
+            decoration: InputDecoration(labelText: 'alert_title'.tr),
           ),
           TextField(
             controller: msgController,
-            decoration: const InputDecoration(labelText: "رسالة التنبيه"),
+            decoration: InputDecoration(labelText: 'alert_message'.tr),
             maxLines: 3,
           ),
         ],
       ),
-      textConfirm: "إرسال",
+      textConfirm: 'send'.tr,
       confirmTextColor: Colors.white,
       onConfirm: () {
         controller.sendAlert(titleController.text, msgController.text);
         Get.back();
       },
+    );
+  }
+
+  // Language switch button for the AppBar
+  Widget _buildLanguageButton() {
+    final isArabic = (Get.locale?.languageCode ?? 'ar') == 'ar';
+    return GestureDetector(
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+        if (isArabic) {
+          await prefs.setString('lang', 'en');
+          await prefs.setString('country', 'US');
+          Get.updateLocale(const Locale('en', 'US'));
+        } else {
+          await prefs.setString('lang', 'ar');
+          await prefs.setString('country', 'EG');
+          Get.updateLocale(const Locale('ar', 'EG'));
+        }
+      },
+      child: Container(
+        width: 36,
+        height: 36,
+        margin: const EdgeInsets.only(left: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.2),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Text(
+            isArabic ? 'E' : '\u0639',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

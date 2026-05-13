@@ -18,23 +18,23 @@ class FullScheduleScreen extends StatelessWidget {
       'Wednesday',
       'Thursday',
     ];
-    final List<String> daysAr = [
-      'الأحد',
-      'الاثنين',
-      'الثلاثاء',
-      'الأربعاء',
-      'الخميس',
+    final List<String> dayKeys = [
+      'day_sunday',
+      'day_monday',
+      'day_tuesday',
+      'day_wednesday',
+      'day_thursday',
     ];
 
     return DefaultTabController(
       length: 5,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("الجدول الدراسي الكامل"),
+          title: Text('full_schedule'.tr),
           bottom: TabBar(
             isScrollable: true,
             indicatorColor: AppColors.accent,
-            tabs: daysAr.map((day) => Tab(text: day)).toList(),
+            tabs: dayKeys.map((key) => Tab(text: key.tr)).toList(),
           ),
         ),
         body: TabBarView(
@@ -53,7 +53,7 @@ class FullScheduleScreen extends StatelessWidget {
       var dayLectures = controller.weeklySchedule[day] ?? [];
 
       if (dayLectures.isEmpty) {
-        return Center(child: Text("لا توجد محاضرات في يوم $day"));
+        return Center(child: Text('no_lectures_on_day'.tr));
       }
 
       return ListView.builder(
@@ -81,7 +81,7 @@ class FullScheduleScreen extends StatelessWidget {
               ),
               title: Text(lecture['courses']['course_name']),
               subtitle: Text(
-                "قاعة: ${lecture['rooms']['room_number']} - ${lecture['rooms']['building_name']}",
+                "${'hall_label'.tr} ${lecture['rooms']['room_number']} - ${lecture['rooms']['building_name']}",
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: 14),
             ),

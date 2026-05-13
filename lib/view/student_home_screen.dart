@@ -1,7 +1,11 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+<<<<<<< HEAD
 import 'package:musrshid_app/services/storage_service.dart';
+=======
+import 'package:shared_preferences/shared_preferences.dart';
+>>>>>>> 1a3cbe7bbea0f514edbff47394041bf4ea54ef6e
 import '../../controllers/schedule_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
@@ -34,8 +38,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       if (!isConnected) {
         // عرض رسالة عندما يكون لا يوجد اتصال
         Get.snackbar(
-          'بدون إتصال',
-          'لا يوجد اتصال بالإنترنت. يرجى التحقق من الاتصال.',
+          'no_connection'.tr,
+          'no_internet_message'.tr,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -45,8 +49,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       } else {
         // عرض رسالة النجاح عند استرجاع الاتصال
         Get.snackbar(
-          'متصل',
-          'تم استرجاع الاتصال بالإنترنت',
+          'connected'.tr,
+          'connection_restored'.tr,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -109,14 +113,14 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   color: Colors.red,
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.wifi_off, color: Colors.white, size: 18),
-                      SizedBox(width: 8),
+                      const Icon(Icons.wifi_off, color: Colors.white, size: 18),
+                      const SizedBox(width: 8),
                       Text(
-                        'بدون اتصال بالإنترنت',
-                        style: TextStyle(
+                        'no_internet_banner'.tr,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -138,7 +142,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                     const SizedBox(height: 25),
                     _buildUpcomingCard(),
                     const SizedBox(height: 25),
-                    _buildSectionTitle("اليوم"),
+                    _buildSectionTitle('today'.tr),
                     const SizedBox(height: 15),
                     _buildTodaySchedule(),
                   ],
@@ -157,9 +161,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      title: const Text(
-        "مُرشد",
-        style: TextStyle(
+      title: Text(
+        'app_name'.tr,
+        style: const TextStyle(
           color: AppColors.primary,
           fontWeight: FontWeight.bold,
           fontSize: 22,
@@ -170,6 +174,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         onPressed: () => Get.find<AuthController>().logout(), // تسجيل الخروج
       ),
       actions: [
+        // Language switch button
+        _buildLanguageButton(),
         Obx(() {
           final notificationService = Get.find<NotificationService>();
           final unreadCount =
@@ -233,9 +239,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             // show all schedules in a new screen
             Get.toNamed('/full_schedule');
           }, // عرض الجدول الكامل
-          child: const Text(
-            "عرض الكل",
-            style: TextStyle(color: Colors.blueAccent),
+          child: Text(
+            'view_all'.tr,
+            style: const TextStyle(color: Colors.blueAccent),
           ),
         ),
       ],
@@ -246,10 +252,10 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   Widget _buildTodaySchedule() {
     return Obx(() {
       if (scheduleController.schedules.isEmpty) {
-        return const Center(
+        return Center(
           child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text("لا توجد محاضرات مسجلة اليوم"),
+            padding: const EdgeInsets.all(20.0),
+            child: Text('no_lectures_today'.tr),
           ),
         );
       }
@@ -360,9 +366,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "ACADEMIC PORTAL",
-          style: TextStyle(
+        Text(
+          'academic_portal'.tr,
+          style: const TextStyle(
             color: AppColors.textLight,
             fontSize: 12,
             letterSpacing: 1.2,
@@ -377,10 +383,10 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               fontWeight: FontWeight.bold,
             ),
             children: [
-              TextSpan(text: "مرحباً بك \n"),
+              TextSpan(text: "${'welcome_greeting'.tr} \n"),
               TextSpan(
                 // get user name from auth controller
-                text: authController.currentUser.value?.fullName ?? "طالب",
+                text: authController.currentUser.value?.fullName ?? 'default_student'.tr,
 
                 style: TextStyle(color: Colors.blueAccent),
               ),
@@ -413,7 +419,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildBadge("المحاضرة القادمة"),
+          _buildBadge('upcoming_lecture'.tr),
           const SizedBox(height: 15),
           Text(
             lecture.course.courseName,
@@ -432,11 +438,11 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildInfoTile(
-                "الوقت",
+                'time_label'.tr,
                 "${lecture.startTime} - ${lecture.endTime}",
               ),
               _buildInfoTile(
-                "المكان",
+                'location_label'.tr,
                 "${lecture.room.buildingName} • ${lecture.room.roomNumber}",
               ),
             ],
@@ -452,7 +458,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               // Get.toNamed('/navigation_map', arguments: lecture.room);
             },
             icon: const Icon(Icons.near_me, size: 18),
-            label: const Text("بدء الإرشاد"),
+            label: Text('start_guidance'.tr),
             style: ElevatedButton.styleFrom(
               foregroundColor: AppColors.primary,
               backgroundColor: Colors.white,
@@ -500,6 +506,43 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  // Language switch button for the AppBar
+  Widget _buildLanguageButton() {
+    final isArabic = (Get.locale?.languageCode ?? 'ar') == 'ar';
+    return GestureDetector(
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+        if (isArabic) {
+          await prefs.setString('lang', 'en');
+          await prefs.setString('country', 'US');
+          Get.updateLocale(const Locale('en', 'US'));
+        } else {
+          await prefs.setString('lang', 'ar');
+          await prefs.setString('country', 'EG');
+          Get.updateLocale(const Locale('ar', 'EG'));
+        }
+      },
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Text(
+            isArabic ? 'E' : 'ع',
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

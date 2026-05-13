@@ -22,7 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomAppBar(title: "مركز التنبيهات"),
+      appBar: CustomAppBar(title: "مركز التنبيهات", showBackButton: false),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
@@ -33,8 +33,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         if (controller.notifications.isEmpty) {
           return EmptyState(
             icon: Icons.notifications_off_outlined,
-            title: "لا توجد تنبيهات",
-            message: "لم تتلقَ أي تنبيهات حتى الآن",
+            title: 'no_notifications'.tr,
+            message: 'no_notifications_message'.tr,
             onRetry: controller.fetchNotifications,
           );
         }
@@ -70,7 +70,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             children: [
               Expanded(
                 child: Text(
-                  data['title'] ?? 'تحديث مهم',
+                  data['title'] ?? 'important_update'.tr,
                   style: AppTheme.headingSmall,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -105,7 +105,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             children: [
               Flexible(
                 child: Text(
-                  "من: ${data['profiles']?['full_name'] ?? 'القسم'}",
+                  "${'from'.tr}: ${data['profiles']?['full_name'] ?? 'department'.tr}",
                   style: AppTheme.bodySmall,
                   overflow: TextOverflow.ellipsis,
                 ),
