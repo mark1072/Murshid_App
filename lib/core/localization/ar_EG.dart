@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 const Map<String, String> arEG = {
   // General
   'app_title': 'مرشد',

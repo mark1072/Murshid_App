@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 const Map<String, String> enUS = {
   // General
   'app_title': 'Murshid',
@@ -62,7 +63,8 @@ const Map<String, String> enUS = {
   'view_all': 'View All',
   'no_lectures_today': 'No lectures scheduled for today',
   'no_connection': 'No Connection',
-  'no_internet_message': 'No internet connection. Please check your connection.',
+  'no_internet_message':
+      'No internet connection. Please check your connection.',
   'no_internet_banner': 'No internet connection',
   'connected': 'Connected',
   'connection_restored': 'Internet connection restored',
@@ -121,4 +123,3 @@ const Map<String, String> enUS = {
   'selection_saved': 'Your selection has been saved successfully',
   'selection_failed': 'Failed to save selection:',
 };
-
