@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_theme.dart';
+import '../core/widgets/language_toggle.dart';
+import '../core/widgets/role_toggle.dart';
 import 'widgets/custom_widgets.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -75,47 +77,56 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Role Toggle at the top, centered
+                Center(
+                  child: RoleToggle(
+                    selectedRole: _selectedRole,
+                    onChanged: (val) => setState(() => _selectedRole = val),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
                 Text(
-                  "إنشاء حساب جديد",
+                  'create_new_account'.tr,
                   style: AppTheme.headingLarge,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "انضم إلى مرشد - مساعد ذكي للجامعة",
+                  'join_murshid'.tr,
                   style: AppTheme.bodySmall,
                 ),
                 const SizedBox(height: 32),
 
                 // Full Name Field
                 CustomTextField(
-                  label: "الاسم الكامل",
-                  hint: "أدخل اسمك الكامل",
+                  label: 'full_name'.tr,
+                  hint: 'enter_full_name'.tr,
                   controller: _nameController,
                   prefixIcon: Icons.person_outline,
                   validator: (v) =>
-                      v!.isEmpty ? "الرجاء إدخال اسمك الكامل" : null,
+                      v!.isEmpty ? 'please_enter_full_name'.tr : null,
                 ),
 
                 // University ID Field
                 CustomTextField(
-                  label: "رقم البطاقة الجامعية",
-                  hint: "أدخل رقم بطاقتك",
+                  label: 'university_id'.tr,
+                  hint: 'enter_university_id'.tr,
                   controller: _uniIdController,
                   prefixIcon: Icons.badge_outlined,
                   keyboardType: TextInputType.number,
                   validator: (v) =>
-                      v!.isEmpty ? "الرجاء إدخال رقم البطاقة الجامعية" : null,
+                      v!.isEmpty ? 'please_enter_university_id'.tr : null,
                 ),
 
                 // Email Field
                 CustomTextField(
-                  label: "البريد الإلكتروني",
-                  hint: "example@murshid.com",
+                  label: 'email'.tr,
+                  hint: 'email_hint'.tr,
                   controller: _emailController,
                   prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) =>
-                      GetUtils.isEmail(v!) ? null : "الرجاء إدخال بريد صحيح",
+                      GetUtils.isEmail(v!) ? null : 'please_enter_valid_email_short'.tr,
                 ),
 
                 // Email Verification Hint
@@ -136,7 +147,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          "سيتم إرسال رابط تحقق إلى بريدك الإلكتروني",
+                          'email_verification_hint'.tr,
                           style: AppTheme.bodySmall.copyWith(
                             color: Colors.blue.shade700,
                           ),
@@ -148,73 +159,21 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
 
                 // Password Field
                 CustomTextField(
-                  label: "كلمة المرور",
-                  hint: "•••••••••",
+                  label: 'password'.tr,
+                  hint: '•••••••••',
                   controller: _passwordController,
                   prefixIcon: Icons.lock_outline,
                   isPassword: true,
                   validator: (v) =>
-                      v!.length < 6 ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : null,
+                      v!.length < 6 ? 'password_min_length'.tr : null,
                 ),
 
-                const SizedBox(height: 16),
-
-                // Role Selection
-                Text(
-                  "اختر نوع الحساب:",
-                  style: AppTheme.bodyLarge,
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  decoration: AppTheme.cardDecoration,
-                  child: DropdownButtonFormField<String>(
-                    initialValue: _selectedRole,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.transparent,
-                      border: InputBorder.none,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'student',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.school, color: AppColors.primary, size: 20),
-                            const SizedBox(width: 12),
-                            Text(
-                              "طالب",
-                              style: AppTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                      DropdownMenuItem(
-                        value: 'professor',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.person, color: AppColors.primary, size: 20),
-                            const SizedBox(width: 12),
-                            Text(
-                              "محاضر",
-                              style: AppTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    onChanged: (val) =>
-                        setState(() => _selectedRole = val!),
-                  ),
-                ),
-
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
 
                 // Submit Button
                 Obx(
                   () => CustomButton(
-                    label: "إنشاء حساب",
+                    label: 'create_account'.tr,
                     isLoading: authController.isLoading.value,
                     onPressed: _handleSignup,
                   ),
@@ -227,13 +186,13 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "لديك حساب بالفعل؟ ",
+                      'already_have_account'.tr,
                       style: AppTheme.bodySmall,
                     ),
                     GestureDetector(
                       onTap: () => Get.back(),
                       child: Text(
-                        "تسجيل الدخول",
+                        'login'.tr,
                         style: AppTheme.bodyMedium.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -244,7 +203,9 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                   ],
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
+                const Center(child: LanguageToggle()),
+                const SizedBox(height: 16),
               ],
             ),
           ),
@@ -259,8 +220,8 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
       if (_selectedRole == 'professor' &&
           !_uniIdController.text.trim().startsWith('200')) {
         Get.snackbar(
-          "رقم بطاقة غير صحيح",
-          "رقم البطاقة لا يطابق سجلات المحاضرين لدينا",
+          'invalid_id'.tr,
+          'id_not_matching'.tr,
           backgroundColor: AppColors.error,
           colorText: Colors.white,
           duration: const Duration(seconds: 4),

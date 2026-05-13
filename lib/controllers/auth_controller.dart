@@ -39,7 +39,7 @@ class AuthController extends GetxController {
           'role': role,
         });
 
-        Get.snackbar("نجاح", "تم إنشاء الحساب بنجاح");
+        Get.snackbar("success".tr, "account_created_success".tr);
         // Navigate to course selection screen
         Get.offAllNamed(
           '/course_selection',
