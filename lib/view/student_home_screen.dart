@@ -386,10 +386,6 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                 text:
                     authController.currentUser.value?.fullName ??
                     'default_student'.tr,
-                text:
-                    authController.currentUser.value?.fullName ??
-                    'default_student'.tr,
-
                 style: TextStyle(color: Colors.blueAccent),
               ),
             ],
