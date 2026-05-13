@@ -41,25 +41,17 @@ class StudentManagementService extends GetxService {
     int courseId,
   ) async {
     try {
-      // if courseId is already exists update the existing schedule with new students
-      final existingSchedule = await supabase
-          .from('schedules')
-          .select('*')
-          .eq('course_id', courseId);
-      if (existingSchedule.isNotEmpty) {
-        for (String studentId in studentIds) {
-          await supabase.from('enrollments').update({
+      for (String studentId in studentIds) {
+        try {
+          // Try to insert the enrollment
+          await supabase.from('enrollments').insert({
             'student_id': studentId,
             'course_id': courseId,
           });
+        } catch (e) {
+          // If enrollment already exists, just continue
+          debugPrint('===== \nEnrollment already exists or other error: $e');
         }
-        return;
-      }
-      for (String studentId in studentIds) {
-        await supabase.from('enrollments').insert({
-          'student_id': studentId,
-          'course_id': courseId,
-        });
       }
     } catch (e) {
       debugPrint('===== \nError adding students to schedule: $e');

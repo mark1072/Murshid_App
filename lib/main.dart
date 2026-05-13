@@ -26,28 +26,23 @@ import 'view/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   await initializeDateFormatting('ar', null);
-
 
   await Supabase.initialize(
     url: 'https://ieatgqyzhhminsuavsss.supabase.co',
     anonKey: 'sb_publishable_WFtIIPKgfehm4ZVJM0l27w_6CD21t0v',
   );
 
-  await AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: 'alerts',
-        channelName: 'Murshid Alerts',
-        channelDescription: 'تنبيهات المحاضرات والجدول الدراسية',
-        defaultColor: AppColors.primary,
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-      ),
-    ],
-  );
+  await AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'alerts',
+      channelName: 'Murshid Alerts',
+      channelDescription: 'تنبيهات المحاضرات والجدول الدراسية',
+      defaultColor: AppColors.primary,
+      ledColor: Colors.white,
+      importance: NotificationImportance.Max,
+    ),
+  ]);
 
   Get.put(AuthController(), permanent: true);
   Get.put(NotificationService(), permanent: true);
@@ -119,6 +114,9 @@ class MurshidApp extends StatelessWidget {
     );
   }
 }
+
+//mark@gmail.com
+//123456789
 
 //student@murshid.com
 //student123456
