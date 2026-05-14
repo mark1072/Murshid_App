@@ -5,6 +5,8 @@ import '../constants/app_colors.dart';
 import '../controllers/full_schedule_controller.dart';
 import '../controllers/course_note_controller.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/course_note_controller.dart';
+import '../controllers/auth_controller.dart';
 
 class FullScheduleScreen extends StatelessWidget {
   FullScheduleScreen({super.key});
@@ -14,6 +16,7 @@ class FullScheduleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> days = [
+      'Saturday',
       'Saturday',
       'Sunday',
       'Monday',

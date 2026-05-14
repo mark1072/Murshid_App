@@ -99,7 +99,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
   }
 
   // نافذة إدخال التنبيه
-  void _showNotifyDialog(BuildContext context, String courseName) {
+  void _showNotifyDialog(BuildContext context, String courseName, int id) {
     final titleController = TextEditingController(
       text: "${'alert_prefix'.tr} $courseName",
     );
@@ -123,7 +123,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
       textConfirm: 'send'.tr,
       confirmTextColor: Colors.white,
       onConfirm: () {
-        controller.sendAlert(titleController.text, msgController.text, courseId);
+        controller.sendAlert(titleController.text, msgController.text, id);
         Get.back();
       },
     );
