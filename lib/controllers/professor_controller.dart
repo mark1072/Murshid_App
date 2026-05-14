@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/schedule_model.dart';
-import '../services/notification_service.dart';
+
 import 'auth_controller.dart';
 
 class ProfessorController extends GetxController {
@@ -39,18 +39,16 @@ class ProfessorController extends GetxController {
   }
 
   // إرسال تنبيه للطلاب
-  Future<void> sendAlert(String title, String message) async {
+  Future<void> sendAlert(String title, String message, int courseId) async {
     try {
       // Save notification to database
       await supabase.from('notifications').insert({
         'sender_id': _auth.currentUser.value!.id,
         'title': title,
         'message': message,
+        'course_id': courseId,
       });
 
-      // Push notification to students using notification service
-      final notificationService = Get.find<NotificationService>();
-      await notificationService.pushNotification(title, message);
 
       Get.snackbar(
         "تم الإرسال",
