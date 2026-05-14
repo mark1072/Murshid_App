@@ -69,6 +69,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
                         onPressed: () => _showNotifyDialog(
                           context,
                           schedule.course.courseName,
+                          schedule.course.id,
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
@@ -92,7 +93,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
   }
 
   // نافذة إدخال التنبيه
-  void _showNotifyDialog(BuildContext context, String courseName) {
+  void _showNotifyDialog(BuildContext context, String courseName, int courseId) {
     final titleController = TextEditingController(text: "${'alert_prefix'.tr} $courseName");
     final msgController = TextEditingController();
 
@@ -114,7 +115,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
       textConfirm: 'send'.tr,
       confirmTextColor: Colors.white,
       onConfirm: () {
-        controller.sendAlert(titleController.text, msgController.text);
+        controller.sendAlert(titleController.text, msgController.text, courseId);
         Get.back();
       },
     );
