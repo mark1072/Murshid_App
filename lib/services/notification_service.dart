@@ -78,4 +78,11 @@ class NotificationService extends GetxService {
   void markNotificationsAsRead() {
     unreadNotificationsCount.value = 0;
   }
+
+  Future<void> pushNotificationToUser({
+    required String recipientId,
+    required String title,
+    required String message,
+    required String notificationType,
+  }) async {}
 }
