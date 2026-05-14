@@ -19,6 +19,7 @@ import 'view/add_course_screen.dart';
 import 'view/full_schedule_screen.dart';
 import 'view/login_screen.dart';
 import 'view/notification_screen.dart';
+import 'view/professor_notes_screen.dart';
 import 'view/signup_screen.dart';
 import 'view/student_home_screen.dart';
 import 'view/splash_screen.dart';
@@ -109,6 +110,7 @@ class MurshidApp extends StatelessWidget {
         GetPage(name: '/professor_home', page: () => ProfessorHomeScreen()),
         GetPage(name: '/add_course', page: () => AddCourseScreen()),
         GetPage(name: '/notifications', page: () => NotificationScreen()),
+        GetPage(name: '/professor_notes', page: () => ProfessorNotesScreen()),
         GetPage(name: '/full_schedule', page: () => FullScheduleScreen()),
       ],
     );

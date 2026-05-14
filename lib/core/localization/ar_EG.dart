@@ -78,6 +78,7 @@ const Map<String, String> arEG = {
 
   // Full Schedule Screen
   'full_schedule': 'الجدول الدراسي الكامل',
+  'day_saturday': 'السبت',
   'day_sunday': 'الأحد',
   'day_monday': 'الاثنين',
   'day_tuesday': 'الثلاثاء',

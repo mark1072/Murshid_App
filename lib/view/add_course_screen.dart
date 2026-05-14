@@ -282,9 +282,12 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         setState(() => _currentStep.value++);
       }
     } else if (_currentStep.value == 1) {
+      // make function to check if the selected room is available at the selected time and day
+      final isRoomAvailable = await _checkRoomAvailability();
       if (_selectedRoomId != null &&
           _startTimeController.text.isNotEmpty &&
-          _endTimeController.text.isNotEmpty) {
+          _endTimeController.text.isNotEmpty &&
+          isRoomAvailable) {
         setState(() => _currentStep.value++);
       } else {
         Get.snackbar('warning'.tr, 'fill_all_fields'.tr);
@@ -350,6 +353,30 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     } catch (e) {
       debugPrint('===== \nError in course creation flow: $e');
       Get.snackbar('error'.tr, '${'error_occurred'.tr} $e');
+    }
+  }
+
+  Future<bool> _checkRoomAvailability() async {
+    try {
+      final isAvailable = await roomService.isRoomAvailable(
+        roomId: _selectedRoomId!,
+        dayOfWeek: _selectedDay,
+        startTime: _startTimeController.text,
+        endTime: _endTimeController.text,
+      );
+      if (!isAvailable) {
+        Get.snackbar(
+          'unavailable'.tr,
+          'room_unavailable_message'.tr,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+      return isAvailable;
+    } catch (e) {
+      debugPrint('===== \nError checking room availability: $e');
+      Get.snackbar('error'.tr, '${'error_occurred'.tr} $e');
+      return false;
     }
   }
 }
