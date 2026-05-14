@@ -31,4 +31,25 @@ class RoomService extends GetxService {
       isLoading.value = false;
     }
   }
+
+  Future<bool> isRoomAvailable({
+    required int roomId,
+    required String dayOfWeek,
+    required String startTime,
+    required String endTime,
+  }) async {
+    try {
+      final response = await supabase
+          .from('schedules')
+          .select('id')
+          .eq('room_id', roomId)
+          .eq('day_of_week', dayOfWeek)
+          .or('start_time.lte.$startTime,end_time.gte.$endTime');
+
+      return response.isEmpty; // If no schedules found, the room is available
+    } catch (e) {
+      debugPrint('===== \nError checking room availability: $e');
+      return false; // Assume not available if there's an error
+    }
+  }
 }

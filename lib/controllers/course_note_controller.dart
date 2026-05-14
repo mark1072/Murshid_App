@@ -8,7 +8,8 @@ import 'auth_controller.dart';
 class CourseNoteController extends GetxController {
   final supabase = Supabase.instance.client;
   final AuthController _authController = Get.find<AuthController>();
-  final NotificationService _notificationService = Get.find<NotificationService>();
+  final NotificationService _notificationService =
+      Get.find<NotificationService>();
 
   var isLoading = false.obs;
   var notes = <CourseNoteModel>[].obs;
@@ -61,7 +62,7 @@ class CourseNoteController extends GetxController {
 
       return true;
     } catch (e) {
-      debugPrint('Error sending note: $e');
+      debugPrint('===== \nError sending note: $e');
       Get.snackbar(
         'خطأ',
         'فشل إرسال الملاحظة: $e',
@@ -163,12 +164,20 @@ class CourseNoteController extends GetxController {
     try {
       await supabase.from('course_notes').delete().eq('id', noteId);
       notes.removeWhere((note) => note.id == noteId);
-      Get.snackbar('تم الحذف', 'تم حذف الملاحظة بنجاح',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      Get.snackbar(
+        'تم الحذف',
+        'تم حذف الملاحظة بنجاح',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       debugPrint('Error deleting note: $e');
-      Get.snackbar('خطأ', 'فشل حذف الملاحظة',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'خطأ',
+        'فشل حذف الملاحظة',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 }

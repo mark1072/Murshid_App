@@ -7,6 +7,7 @@ import '../../controllers/schedule_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/course_note_controller.dart';
 import '../services/navigation_service.dart';
 import '../services/notification_service.dart';
 import '../services/connectivity_service.dart';
@@ -263,94 +264,114 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         itemCount: scheduleController.schedules.length,
         itemBuilder: (context, index) {
           final item = scheduleController.schedules[index];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 15),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppSizes.r16),
-              border: Border.all(color: Colors.grey.shade100),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                // عمود الوقت
-                Column(
-                  children: [
-                    Text(
-                      item.startTime.substring(0, 5), // عرض HH:mm فقط
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    const Icon(
-                      Icons.arrow_downward,
-                      size: 12,
-                      color: Colors.grey,
-                    ),
-                    Text(
-                      item.endTime.substring(0, 5),
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                // خط فاصل ملون
-                Container(width: 3, height: 40, color: AppColors.accent),
-                const SizedBox(width: 15),
-                // بيانات المادة والقاعة
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          final noteController = Get.put(CourseNoteController());
+
+          return GestureDetector(
+            onTap: () {
+              // عند الضغط، إظهار dialog لكتابة ملاحظة
+              if (item.professorId != null) {
+                _showNoteDialog(
+                  context,
+                  item.course.courseName,
+                  item.course.courseCode,
+                  item.course.id,
+                  item.professorId!,
+                  noteController,
+                );
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 15),
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppSizes.r16),
+                border: Border.all(color: Colors.grey.shade100),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  // عمود الوقت
+                  Column(
                     children: [
                       Text(
-                        item.course.courseName,
+                        item.startTime.substring(0, 5), // عرض HH:mm فقط
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          color: AppColors.primary,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            size: 14,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            "${item.room.buildingName} - ${item.room.roomNumber}",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                      const Icon(
+                        Icons.arrow_downward,
+                        size: 12,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        item.endTime.substring(0, 5),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                // أيقونة الملاحة السريعة
-                IconButton(
-                  icon: const Icon(
-                    Icons.directions_outlined,
-                    color: AppColors.primary,
+                  const SizedBox(width: 20),
+                  // خط فاصل ملون
+                  Container(width: 3, height: 40, color: AppColors.accent),
+                  const SizedBox(width: 15),
+                  // بيانات المادة والقاعة
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.course.courseName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${item.room.buildingName} - ${item.room.roomNumber}",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  onPressed: () => NavigationService().openMapToDestination(
-                    item.room.latitude ?? 0.0,
-                    item.room.longitude ?? 0.0,
+                  // أيقونة الملاحة السريعة
+                  IconButton(
+                    icon: const Icon(
+                      Icons.directions_outlined,
+                      color: AppColors.primary,
+                    ),
+                    onPressed: () => NavigationService().openMapToDestination(
+                      item.room.latitude ?? 0.0,
+                      item.room.longitude ?? 0.0,
+                    ),
+                    // Get.toNamed('/navigation_map', arguments: item.room),
                   ),
-                  // Get.toNamed('/navigation_map', arguments: item.room),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -539,6 +560,94 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showNoteDialog(
+    BuildContext context,
+    String courseName,
+    String courseCode,
+    int courseId,
+    String professorId,
+    CourseNoteController noteController,
+  ) {
+    final noteTextController = TextEditingController();
+
+    Get.defaultDialog(
+      titlePadding: const EdgeInsets.all(20),
+      contentPadding: const EdgeInsets.all(20),
+      title: 'ملاحظة عن المقرر',
+      titleStyle: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: AppColors.primary,
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              'المقرر: $courseName ($courseCode)',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+          ),
+          TextField(
+            controller: noteTextController,
+            minLines: 3,
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: 'اكتب ملاحظتك هنا',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              hintText: 'مثال: لدي استفسار عن الدرس...',
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ],
+      ),
+      cancel: OutlinedButton.icon(
+        icon: const Icon(Icons.close),
+        label: const Text('إلغاء'),
+        onPressed: () => Get.back(),
+      ),
+      confirm: Obx(
+        () => ElevatedButton.icon(
+          icon: const Icon(Icons.send),
+          label: Text(
+            noteController.isLoading.value ? 'جاري الإرسال...' : 'إرسال',
+          ),
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+          onPressed: noteController.isLoading.value
+              ? null
+              : () async {
+                  if (noteTextController.text.trim().isEmpty) {
+                    Get.snackbar(
+                      'تنبيه',
+                      'الرجاء كتابة ملاحظة قبل الإرسال',
+                      backgroundColor: Colors.orange,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
+
+                  final success = await noteController.sendNoteToTeacher(
+                    professorId: professorId,
+                    courseId: courseId,
+                    courseCode: courseCode,
+                    courseName: courseName,
+                    noteText: noteTextController.text.trim(),
+                  );
+
+                  if (success) {
+                    Get.back();
+                    noteTextController.clear();
+                  }
+                },
         ),
       ),
     );

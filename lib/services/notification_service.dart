@@ -79,10 +79,25 @@ class NotificationService extends GetxService {
     unreadNotificationsCount.value = 0;
   }
 
+  // Push notification to a specific user
   Future<void> pushNotificationToUser({
     required String recipientId,
     required String title,
     required String message,
     required String notificationType,
-  }) async {}
+  }) async {
+    try {
+      // Save notification to database with recipient_id
+      await supabase.from('notifications').insert({
+        'recipient_id': recipientId,
+        'title': title,
+        'message': message,
+        'notification_type': notificationType,
+      });
+
+      debugPrint('Notification sent to user: $recipientId');
+    } catch (e) {
+      debugPrint('Error pushing notification to user: $e');
+    }
+  }
 }

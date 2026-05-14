@@ -30,27 +30,63 @@ class ScheduleController extends GetxController {
       if (userId == null) return;
 
       // جلب البيانات مباشرة من جدول schedules باستخدام user_id
+      final today = DateTime.now().weekday; // جلب اليوم الحالي (1-7)
+      print('====\n $today');
+      final dayName = today == 1
+          ? 'Monday'
+          : today == 2
+          ? 'Tuesday'
+          : today == 3
+          ? 'Wednesday'
+          : today == 4
+          ? 'Thursday'
+          : today == 5
+          ? 'Friday'
+          : today == 6
+          ? 'Saturday'
+          : 'Sunday';
+
       final List<dynamic> response = await supabase
           .from('schedules')
-          .select('*, courses(id, course_name, course_code), rooms(*)')
-          .eq('user_id', userId);
-
+          .select('''
+            *,
+            courses (*),
+            rooms (*)
+          ''')
+          .eq('day_of_week', dayName);
       // تحويل البيانات القادمة إلى List من ScheduleModel
-      final List<ScheduleModel> all =
-          response.map((item) => ScheduleModel.fromJson(item)).toList();
+      schedules.value = response
+          .map((item) => ScheduleModel.fromJson(item))
+          .toList();
 
-      // تصفية الجدول ليحتوي على محاضرات اليوم فقط
-      final today = [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday'
-      ][DateTime.now().weekday % 7];
+      // final List<dynamic> response = await supabase
+      //     .from('schedules')
+      //     .select('''
+      //       *,
+      //       courses (id, course_name, course_code, professor_id),
+      //       rooms (*)
+      //     ''')
+      //     .eq('user_id', userId);
+      // print('===== \nFetched schedule data: $response');
 
-      schedules.value = all.where((s) => s.dayOfWeek == today).toList();
+      // // تحويل البيانات القادمة إلى List من ScheduleModel
+      // final List<ScheduleModel> all = response
+      //     .map((item) => ScheduleModel.fromJson(item))
+      //     .toList();
+
+      // // تصفية الجدول ليحتوي على محاضرات اليوم فقط
+      // final today = [
+      //   'Sunday',
+      //   'Monday',
+      //   'Tuesday',
+      //   'Wednesday',
+      //   'Thursday',
+      //   'Friday',
+      //   'Saturday',
+      // ][DateTime.now().weekday % 7];
+      // print('===== \nToday is: $today');
+
+      // schedules.value = all.where((s) => s.dayOfWeek == today).toList();
 
       // تحديد المحاضرة القادمة (منطق بسيط للعرض)
       _setUpcomingLecture();

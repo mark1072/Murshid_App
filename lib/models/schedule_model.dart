@@ -8,6 +8,7 @@ class ScheduleModel {
   final String endTime;
   final CourseModel course;
   final RoomModel room;
+  final String? professorId; // معرف المدرس
 
   ScheduleModel({
     required this.id,
@@ -16,6 +17,7 @@ class ScheduleModel {
     required this.endTime,
     required this.course,
     required this.room,
+    this.professorId,
   });
 
   // تحويل البيانات القادمة من Supabase (Map) إلى كائن (Object)
@@ -27,6 +29,7 @@ class ScheduleModel {
       endTime: json['end_time'],
       course: CourseModel.fromJson(json['courses']), // علاقة Nested
       room: RoomModel.fromJson(json['rooms']), // علاقة Nested
+      professorId: json['courses']?['professor_id'], // جلب معرف المدرس من courses
     );
   }
 }
