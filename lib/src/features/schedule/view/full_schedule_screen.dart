@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
 import 'package:musrshid_app/src/features/schedule/viewmodel/full_schedule_controller.dart';
 import 'package:musrshid_app/src/features/courses/viewmodel/course_note_controller.dart';
-// import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 
 class FullScheduleScreen extends StatelessWidget {
   FullScheduleScreen({super.key});
