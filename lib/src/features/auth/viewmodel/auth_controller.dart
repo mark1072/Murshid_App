@@ -1,3 +1,5 @@
+// ignore_for_file: duplicate_ignore, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -242,7 +244,6 @@ class AuthController extends GetxController {
       "خطأ",
       message,
       snackPosition: SnackPosition.BOTTOM,
-      // ignore: deprecated_member_use
       backgroundColor: AppColors.error.withOpacity(0.8),
       colorText: AppColors.secondary,
       margin: EdgeInsets.all(AppSizes.p16),

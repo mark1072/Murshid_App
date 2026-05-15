@@ -135,60 +135,60 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  void _showNoInternetDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColors.background,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: Row(
-            children: [
-              Icon(Icons.wifi_off, color: AppColors.error, size: 28),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'لا يوجد اتصال بالإنترنت',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            'يرجى التأكد من اتصال الإنترنت ثم إعادة المحاولة',
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              color: AppColors.textDark,
-              fontSize: 16,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _checkInternetAndNavigate();
-              },
-              child: Text(
-                'إعادة المحاولة',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showNoInternetDialog() {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor: AppColors.background,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(20),
+  //         ),
+  //         title: Row(
+  //           children: [
+  //             Icon(Icons.wifi_off, color: AppColors.error, size: 28),
+  //             const SizedBox(width: 12),
+  //             const Expanded(
+  //               child: Text(
+  //                 'لا يوجد اتصال بالإنترنت',
+  //                 style: TextStyle(
+  //                   fontFamily: 'Cairo',
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         content: Text(
+  //           'يرجى التأكد من اتصال الإنترنت ثم إعادة المحاولة',
+  //           style: TextStyle(
+  //             fontFamily: 'Cairo',
+  //             color: AppColors.textDark,
+  //             fontSize: 16,
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //               _checkInternetAndNavigate();
+  //             },
+  //             child: Text(
+  //               'إعادة المحاولة',
+  //               style: TextStyle(
+  //                 fontFamily: 'Cairo',
+  //                 color: AppColors.primary,
+  //                 fontWeight: FontWeight.bold,
+  //                 fontSize: 16,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   void dispose() {

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
 import 'package:musrshid_app/src/features/schedule/viewmodel/full_schedule_controller.dart';
 import 'package:musrshid_app/src/features/courses/viewmodel/course_note_controller.dart';
-import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
+// import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 
 class FullScheduleScreen extends StatelessWidget {
   FullScheduleScreen({super.key});
@@ -69,8 +69,8 @@ class FullScheduleScreen extends StatelessWidget {
 
         return InkWell(
           onTap: () {
-            print('=====\nLecture tapped: $lecture');
-            print('=====\nLecture tapped: ${lecture['course_id']}');
+            debugPrint('=====\nLecture tapped: $lecture');
+            debugPrint('=====\nLecture tapped: ${lecture['course_id']}');
             _showNoteDialog(
               context,
               lecture['courses']['course_name'],

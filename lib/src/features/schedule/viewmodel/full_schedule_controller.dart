@@ -42,8 +42,11 @@ class FullScheduleController extends GetxController {
           _groupByDay(List<dynamic>.from(cached));
         } else {
           weeklySchedule.clear();
-          Get.snackbar("تنبيه", "لا توجد بيانات محفوظة",
-              snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar(
+            "تنبيه",
+            "لا توجد بيانات محفوظة",
+            snackPosition: SnackPosition.BOTTOM,
+          );
         }
       }
     } catch (e) {
@@ -71,6 +74,6 @@ class FullScheduleController extends GetxController {
       }
     }
     weeklySchedule.value = tempMap;
-    print('======\nGrouped Schedule: $weeklySchedule');
+    debugPrint('======\nGrouped Schedule: $weeklySchedule');
   }
 }

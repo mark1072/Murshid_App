@@ -76,64 +76,64 @@ class ScheduleController extends GetxController {
           }
           _pendingAdditions.clear();
         }
-      // جلب البيانات مباشرة من جدول schedules باستخدام user_id
-      final todayNum = DateTime.now().weekday; // جلب اليوم الحالي (1-7)
-      print('====\n $todayNum');
-      final dayName = todayNum == 1
-          ? 'Monday'
-          : todayNum == 2
-          ? 'Tuesday'
-          : todayNum == 3
-          ? 'Wednesday'
-          : todayNum == 4
-          ? 'Thursday'
-          : todayNum == 5
-          ? 'Friday'
-          : todayNum == 6
-          ? 'Saturday'
-          : 'Sunday';
+        // جلب البيانات مباشرة من جدول schedules باستخدام user_id
+        final todayNum = DateTime.now().weekday; // جلب اليوم الحالي (1-7)
+        debugPrint('====\n $todayNum');
+        final dayName = todayNum == 1
+            ? 'Monday'
+            : todayNum == 2
+            ? 'Tuesday'
+            : todayNum == 3
+            ? 'Wednesday'
+            : todayNum == 4
+            ? 'Thursday'
+            : todayNum == 5
+            ? 'Friday'
+            : todayNum == 6
+            ? 'Saturday'
+            : 'Sunday';
 
-      final List<dynamic> todayResponse = await supabase
-          .from('schedules')
-          .select('''
+        final List<dynamic> todayResponse = await supabase
+            .from('schedules')
+            .select('''
             *,
             courses (*),
             rooms (*)
           ''')
-          .eq('day_of_week', dayName);
-      // تحويل البيانات القادمة إلى List من ScheduleModel
-      schedules.value = todayResponse
-          .map((item) => ScheduleModel.fromJson(item))
-          .toList();
+            .eq('day_of_week', dayName);
+        // تحويل البيانات القادمة إلى List من ScheduleModel
+        schedules.value = todayResponse
+            .map((item) => ScheduleModel.fromJson(item))
+            .toList();
 
-      // final List<dynamic> response = await supabase
-      //     .from('schedules')
-      //     .select('''
-      //       *,
-      //       courses (id, course_name, course_code, professor_id),
-      //       rooms (*)
-      //     ''')
-      //     .eq('user_id', userId);
-      // print('===== \nFetched schedule data: $response');
+        // final List<dynamic> response = await supabase
+        //     .from('schedules')
+        //     .select('''
+        //       *,
+        //       courses (id, course_name, course_code, professor_id),
+        //       rooms (*)
+        //     ''')
+        //     .eq('user_id', userId);
+        // print('===== \nFetched schedule data: $response');
 
-      // // تحويل البيانات القادمة إلى List من ScheduleModel
-      // final List<ScheduleModel> all = response
-      //     .map((item) => ScheduleModel.fromJson(item))
-      //     .toList();
+        // // تحويل البيانات القادمة إلى List من ScheduleModel
+        // final List<ScheduleModel> all = response
+        //     .map((item) => ScheduleModel.fromJson(item))
+        //     .toList();
 
-      // // تصفية الجدول ليحتوي على محاضرات اليوم فقط
-      // final today = [
-      //   'Sunday',
-      //   'Monday',
-      //   'Tuesday',
-      //   'Wednesday',
-      //   'Thursday',
-      //   'Friday',
-      //   'Saturday',
-      // ][DateTime.now().weekday % 7];
-      // print('===== \nToday is: $today');
+        // // تصفية الجدول ليحتوي على محاضرات اليوم فقط
+        // final today = [
+        //   'Sunday',
+        //   'Monday',
+        //   'Tuesday',
+        //   'Wednesday',
+        //   'Thursday',
+        //   'Friday',
+        //   'Saturday',
+        // ][DateTime.now().weekday % 7];
+        // print('===== \nToday is: $today');
 
-      // schedules.value = all.where((s) => s.dayOfWeek == today).toList();
+        // schedules.value = all.where((s) => s.dayOfWeek == today).toList();
 
         final todayStr = _getTodayName();
         schedules.value = all.where((s) => s.dayOfWeek == todayStr).toList();
@@ -153,8 +153,11 @@ class ScheduleController extends GetxController {
           _setUpcomingLecture();
         } else {
           schedules.clear();
-          Get.snackbar("تنبيه", "لا توجد بيانات محفوظة",
-              snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar(
+            "تنبيه",
+            "لا توجد بيانات محفوظة",
+            snackPosition: SnackPosition.BOTTOM,
+          );
         }
       }
     } catch (e) {
