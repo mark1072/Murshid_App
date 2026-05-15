@@ -79,6 +79,7 @@ const Map<String, String> enUS = {
 
   // Full Schedule Screen
   'full_schedule': 'Full Schedule',
+  'day_saturday': 'Saturday',
   'day_sunday': 'Sunday',
   'day_monday': 'Monday',
   'day_tuesday': 'Tuesday',

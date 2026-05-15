@@ -56,6 +56,7 @@ class FullScheduleController extends GetxController {
   // تقسيم البيانات: {'Sunday': [...], 'Monday': [...]}
   void _groupByDay(List<dynamic> data) {
     Map<String, List<dynamic>> tempMap = {
+      'Saturday': [],
       'Sunday': [],
       'Monday': [],
       'Tuesday': [],
@@ -70,5 +71,6 @@ class FullScheduleController extends GetxController {
       }
     }
     weeklySchedule.value = tempMap;
+    print('======\nGrouped Schedule: $weeklySchedule');
   }
 }

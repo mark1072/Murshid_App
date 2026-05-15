@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:musrshid_app/services/connectivity_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../controllers/auth_controller.dart';
 
 class NotificationController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -36,6 +37,35 @@ class NotificationController extends GetxController {
           notifications.assignAll(List<Map<String, dynamic>>.from(cached));
         }
       }
+      final authController = Get.find<AuthController>();
+      final currentUser = authController.currentUser.value;
+
+      if (currentUser == null) {
+        notifications.clear();
+        return;
+      }
+
+      // Fetch student's enrolled course IDs
+      final enrollments = await supabase
+          .from('enrollments')
+          .select('course_id')
+          .eq('student_id', currentUser.id);
+
+      final enrolledCourseIds = enrollments.map((e) => e['course_id']).toList();
+
+      if (enrolledCourseIds.isEmpty) {
+        notifications.clear();
+        return;
+      }
+
+      // Fetching and ordering by the most recent first, filtered by enrolled courses
+      final data = await supabase
+          .from('notifications')
+          .select('*, profiles(full_name)')
+          .inFilter('course_id', enrolledCourseIds)
+          .order('created_at', ascending: false);
+
+      notifications.assignAll(data);
     } catch (e) {
       Get.snackbar("Error", "Could not load notifications");
     } finally {

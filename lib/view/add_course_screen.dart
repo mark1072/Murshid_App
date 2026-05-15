@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../constants/app_colors.dart';
 import '../controllers/course_creation_controller.dart';
+import '../controllers/professor_controller.dart';
 import '../services/room_service.dart';
 import '../services/student_management_service.dart';
 
@@ -61,9 +62,11 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+
         title: Text(
           'add_new_lecture'.tr,
           style: const TextStyle(
@@ -71,10 +74,6 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.primary),
-          onPressed: () => Get.back(),
         ),
       ),
       body: Stepper(
@@ -100,7 +99,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                       ),
                       prefixIcon: const Icon(Icons.code),
                     ),
-                    validator: (v) => v!.isEmpty ? 'enter_course_code'.tr : null,
+                    validator: (v) =>
+                        v!.isEmpty ? 'enter_course_code'.tr : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -112,7 +112,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                       ),
                       prefixIcon: const Icon(Icons.book),
                     ),
-                    validator: (v) => v!.isEmpty ? 'enter_course_name'.tr : null,
+                    validator: (v) =>
+                        v!.isEmpty ? 'enter_course_name'.tr : null,
                   ),
                 ],
               ),
@@ -152,7 +153,6 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                   );
                 }),
                 const SizedBox(height: 16),
-
                 // Day Selection
                 DropdownButtonFormField<String>(
                   initialValue: _selectedDay,
@@ -282,9 +282,12 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         setState(() => _currentStep.value++);
       }
     } else if (_currentStep.value == 1) {
+      // make function to check if the selected room is available at the selected time and day
+      final isRoomAvailable = await _checkRoomAvailability();
       if (_selectedRoomId != null &&
           _startTimeController.text.isNotEmpty &&
-          _endTimeController.text.isNotEmpty) {
+          _endTimeController.text.isNotEmpty &&
+          isRoomAvailable) {
         setState(() => _currentStep.value++);
       } else {
         Get.snackbar('warning'.tr, 'fill_all_fields'.tr);
@@ -334,14 +337,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         return;
       }
 
-      // 3. Add students to the schedule
-      if (_selectedStudentIds.isNotEmpty) {
-        await studentService.addStudentsToSchedule(
-          _selectedStudentIds.toList(),
-          scheduleId,
-        );
-      }
-
+      // 3. Students already added in createSchedule method
       Get.snackbar(
         'success'.tr,
         'course_created_success'.tr,
@@ -349,10 +345,38 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         colorText: Colors.white,
       );
 
-      Get.back();
+      // Refresh professor schedules before navigating
+      final professorController = Get.find<ProfessorController>();
+      await professorController.fetchProfessorSchedule();
+
+      Get.offNamed('/professor_home');
     } catch (e) {
       debugPrint('===== \nError in course creation flow: $e');
       Get.snackbar('error'.tr, '${'error_occurred'.tr} $e');
+    }
+  }
+
+  Future<bool> _checkRoomAvailability() async {
+    try {
+      final isAvailable = await roomService.isRoomAvailable(
+        roomId: _selectedRoomId!,
+        dayOfWeek: _selectedDay,
+        startTime: _startTimeController.text,
+        endTime: _endTimeController.text,
+      );
+      if (!isAvailable) {
+        Get.snackbar(
+          'unavailable'.tr,
+          'room_unavailable_message'.tr,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+      return isAvailable;
+    } catch (e) {
+      debugPrint('===== \nError checking room availability: $e');
+      Get.snackbar('error'.tr, '${'error_occurred'.tr} $e');
+      return false;
     }
   }
 }

@@ -41,6 +41,20 @@ class AuthController extends GetxController {
         data: {'full_name': name, 'university_id': uniId, 'role': role},
       );
 
+      // Create user model with the new signup data
+      final newUser = UserModel(
+        id: res.user!.id,
+        fullName: name,
+        universityId: uniId,
+        role: role,
+      );
+
+      // Update the current instance's currentUser
+      currentUser.value = newUser;
+
+      // Save to storage immediately so it persists
+      await Get.find<StorageService>().saveUser(newUser);
+
       if (res.user != null) {
         // Create profile immediately after signup
         await supabase.from('profiles').insert({

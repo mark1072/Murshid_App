@@ -31,16 +31,22 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
         ),
         backgroundColor: AppColors.primary,
         actions: [
-        // Language switch button
-        _buildLanguageButton(),
-        IconButton(
-          onPressed: () {
-            Get.find<AuthController>().logout();
-            Get.offAllNamed("/login");
-          },
-          icon: const Icon(Icons.logout, color: Colors.white),
-        ),
-      ],
+          // Language switch button
+          _buildLanguageButton(),
+          // زر الملاحظات
+          IconButton(
+            onPressed: () => Get.toNamed('/professor_notes'),
+            icon: const Icon(Icons.mail_outline, color: Colors.white),
+            tooltip: 'ملاحظات الطلاب',
+          ),
+          IconButton(
+            onPressed: () {
+              Get.find<AuthController>().logout();
+              Get.offAllNamed("/login");
+            },
+            icon: const Icon(Icons.logout, color: Colors.white),
+          ),
+        ],
       ),
       body: Obx(
         () => controller.isLoading.value
@@ -69,6 +75,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
                         onPressed: () => _showNotifyDialog(
                           context,
                           schedule.course.courseName,
+                          schedule.course.id,
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
@@ -93,7 +100,9 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
 
   // نافذة إدخال التنبيه
   void _showNotifyDialog(BuildContext context, String courseName) {
-    final titleController = TextEditingController(text: "${'alert_prefix'.tr} $courseName");
+    final titleController = TextEditingController(
+      text: "${'alert_prefix'.tr} $courseName",
+    );
     final msgController = TextEditingController();
 
     Get.defaultDialog(
@@ -114,7 +123,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
       textConfirm: 'send'.tr,
       confirmTextColor: Colors.white,
       onConfirm: () {
-        controller.sendAlert(titleController.text, msgController.text);
+        controller.sendAlert(titleController.text, msgController.text, courseId);
         Get.back();
       },
     );

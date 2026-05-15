@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../controllers/auth_controller.dart';
 
 class NotificationService extends GetxService {
   final supabase = Supabase.instance.client;
@@ -30,10 +31,41 @@ class NotificationService extends GetxService {
           event: PostgresChangeEvent.insert,
           schema: 'public',
           table: 'notifications',
-          callback: (payload) {
+          callback: (payload) async {
             // استخراج البيانات من الـ Payload
+            final senderId = payload.newRecord['sender_id'];
             final title = payload.newRecord['title'];
             final message = payload.newRecord['message'];
+            final courseId = payload.newRecord['course_id'];
+
+            final authController = Get.find<AuthController>();
+            final currentUser = authController.currentUser.value;
+
+            // إذا لم يكن هناك مستخدم مسجل الدخول، تجاهل الإشعار
+            if (currentUser == null) return;
+
+            // إذا كان المستخدم هو مرسل الإشعار (الدكتور)، تجاهل إظهار الإشعار المحلي
+            if (senderId == currentUser.id) return;
+
+            // إذا كان الإشعار مخصصاً لمادة معينة، تحقق من تسجيل الطالب فيها
+            if (courseId != null) {
+              try {
+                final enrollment = await supabase
+                    .from('enrollments')
+                    .select()
+                    .eq('student_id', currentUser.id)
+                    .eq('course_id', courseId)
+                    .maybeSingle();
+
+                if (enrollment == null) {
+                  // الطالب غير مسجل في المادة، تجاهل الإشعار
+                  return;
+                }
+              } catch (e) {
+                debugPrint('Error checking enrollment for notification: $e');
+                return;
+              }
+            }
 
             // زيادة عدد التنبيهات غير المقروءة
             unreadNotificationsCount.value++;
@@ -57,25 +89,31 @@ class NotificationService extends GetxService {
     );
   }
 
-  // Public method to push notifications to students
-  Future<void> pushNotification(String title, String message) async {
-    try {
-      // Ensure permissions are granted before showing notification
-      final allowed = await AwesomeNotifications().isNotificationAllowed();
-      if (!allowed) {
-        await AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-      unreadNotificationsCount.value++;
-      _showLocalNotification(title, message);
-    } catch (e) {
-      // show snackbar error if notification fails
-      debugPrint('===== \nError pushing notification: $e');
-      Get.snackbar("خطأ", "فشل إرسال التنبيه", backgroundColor: Colors.red);
-    }
-  }
 
   // Mark notifications as read
   void markNotificationsAsRead() {
     unreadNotificationsCount.value = 0;
+  }
+
+  // Push notification to a specific user
+  Future<void> pushNotificationToUser({
+    required String recipientId,
+    required String title,
+    required String message,
+    required String notificationType,
+  }) async {
+    try {
+      // Save notification to database with recipient_id
+      await supabase.from('notifications').insert({
+        'recipient_id': recipientId,
+        'title': title,
+        'message': message,
+        'notification_type': notificationType,
+      });
+
+      debugPrint('Notification sent to user: $recipientId');
+    } catch (e) {
+      debugPrint('Error pushing notification to user: $e');
+    }
   }
 }
