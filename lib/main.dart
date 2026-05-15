@@ -22,43 +22,48 @@ import 'view/notification_screen.dart';
 import 'view/signup_screen.dart';
 import 'view/student_home_screen.dart';
 import 'view/splash_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
+  await Hive.initFlutter();
   await initializeDateFormatting('ar', null);
-
 
   await Supabase.initialize(
     url: 'https://ieatgqyzhhminsuavsss.supabase.co',
     anonKey: 'sb_publishable_WFtIIPKgfehm4ZVJM0l27w_6CD21t0v',
   );
 
-  await AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: 'alerts',
-        channelName: 'Murshid Alerts',
-        channelDescription: 'تنبيهات المحاضرات والجدول الدراسية',
-        defaultColor: AppColors.primary,
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-      ),
-    ],
-  );
+  await AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'alerts',
+      channelName: 'Murshid Alerts',
+      channelDescription: 'تنبيهات المحاضرات والجدول الدراسية',
+      defaultColor: AppColors.primary,
+      ledColor: Colors.white,
+      importance: NotificationImportance.Max,
+    ),
+  ]);
 
-  Get.put(AuthController(), permanent: true);
-  Get.put(NotificationService(), permanent: true);
-  Get.put(CourseService(), permanent: true);
-  Get.put(RoomService(), permanent: true);
-  Get.put(StudentManagementService(), permanent: true);
-  Get.put(ConnectivityService(), permanent: true);
-  await Get.putAsync<StorageService>(
-    () async => await StorageService().init(),
-    permanent: true,
-  );
+  try {
+    Get.put(AuthController(), permanent: true);
+    Get.put(NotificationService(), permanent: true);
+    Get.put(CourseService(), permanent: true);
+    Get.put(RoomService(), permanent: true);
+    Get.put(StudentManagementService(), permanent: true);
+    Get.put(ConnectivityService(), permanent: true);
+  } catch (e) {
+    debugPrint('Error putting services: $e');
+  }
+
+  try {
+    await Get.putAsync<StorageService>(
+      () async => await StorageService().init(),
+      permanent: true,
+    );
+  } catch (e) {
+    debugPrint('Error initializing StorageService: $e');
+  }
 
   final prefs = await SharedPreferences.getInstance();
   final lang = prefs.getString('lang') ?? 'ar';
@@ -134,6 +139,9 @@ class MurshidApp extends StatelessWidget {
 
 //new2@hotmil.com
 //new12345
+//omarnour@murshed.com --> student
+//omarabouzeid@murshed.com --> doctor
+//omar##123
 
 // to upload to github
 // git init
