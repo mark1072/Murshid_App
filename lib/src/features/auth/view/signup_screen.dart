@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
 import 'package:musrshid_app/src/core/constants/app_theme.dart';
+import 'package:musrshid_app/src/core/constants/app_assets.dart';
 import 'package:musrshid_app/src/core/widgets/language_toggle.dart';
 import 'package:musrshid_app/src/core/widgets/role_toggle.dart';
 import 'package:musrshid_app/src/core/widgets/custom_widgets.dart';
@@ -77,6 +78,30 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Logo
+                Center(
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.accent.withOpacity(0.2),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        AppAssets.logo,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
                 // Role Toggle at the top, centered
                 Center(
                   child: RoleToggle(
