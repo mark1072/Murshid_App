@@ -8,7 +8,6 @@ import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/course_note_controller.dart';
-import '../controllers/course_note_controller.dart';
 import '../services/navigation_service.dart';
 import '../services/notification_service.dart';
 import '../services/connectivity_service.dart';
