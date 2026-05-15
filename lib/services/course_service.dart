@@ -22,7 +22,7 @@ class CourseService extends GetxService {
     try {
       isLoading.value = true;
       final connectivity = Get.find<ConnectivityService>();
-      final box = await Hive.openBox('coursesBox');
+      final box = Hive.box('coursesBox');
 
       if (connectivity.isConnected.value) {
         final response = await supabase

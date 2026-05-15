@@ -5,6 +5,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 import '../models/user_model.dart';
+import '../services/connectivity_service.dart';
+import '../services/storage_service.dart';
+import '../services/student_management_service.dart';
+import '../services/course_service.dart';
+import 'schedule_controller.dart';
 
 class AuthController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -22,6 +27,12 @@ class AuthController extends GetxController {
     required String role,
   }) async {
     try {
+      final connectivity = Get.find<ConnectivityService>();
+      if (!connectivity.isConnected.value) {
+        _showErrorSnackBar("يجب الاتصال بالإنترنت لإنشاء حساب جديد");
+        return;
+      }
+
       isLoading.value = true;
       final AuthResponse res = await supabase.auth.signUp(
         email: email,
@@ -63,6 +74,27 @@ class AuthController extends GetxController {
 
   // دالة تسجيل الدخول
   Future<void> login(String email, String password) async {
+    final connectivity = Get.find<ConnectivityService>();
+    final storage = Get.find<StorageService>();
+
+    if (!connectivity.isConnected.value) {
+      final cachedUser = storage.getCachedUser();
+      if (cachedUser != null) {
+        Get.snackbar(
+          "تنبيه",
+          "أنت غير متصل بالإنترنت، يمكنك تسجيل الدخول بالبيانات المحفوظة مسبقاً",
+          backgroundColor: AppColors.primary.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+        currentUser.value = cachedUser;
+        _navigateBasedOnRole(cachedUser.role);
+        return;
+      } else {
+        _showErrorSnackBar("يجب الاتصال بالإنترنت لتسجيل الدخول لأول مرة");
+        return;
+      }
+    }
+
     try {
       isLoading.value = true;
 
@@ -82,8 +114,14 @@ class AuthController extends GetxController {
 
         if (data != null) {
           currentUser.value = UserModel.fromJson(data);
+          // حفظ البيانات في Hive
+          await storage.saveUser(currentUser.value!);
+
           // 3. التوجيه بناءً على الدور (Role)
           _navigateBasedOnRole(currentUser.value!.role);
+
+          // 4. مزامنة البيانات في الخلفية
+          performPostLoginSync();
         } else {
           // Profile doesn't exist, create it from auth metadata
           await _createProfileFromAuth(res.user!);
@@ -107,6 +145,43 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // مزامنة البيانات في الخلفية
+  Future<void> performPostLoginSync() async {
+    final connectivity = Get.find<ConnectivityService>();
+    if (!connectivity.isConnected.value || currentUser.value == null) return;
+
+    debugPrint("Starting background sync...");
+
+    // Fetch Schedule
+    try {
+      if (Get.isRegistered<ScheduleController>()) {
+        Get.find<ScheduleController>().fetchUserSchedule();
+      }
+    } catch (e) {
+      debugPrint("Sync Error (Schedule): $e");
+    }
+
+    // Fetch Courses
+    try {
+      if (Get.isRegistered<CourseService>()) {
+        Get.find<CourseService>().fetchAllCourses();
+      }
+    } catch (e) {
+      debugPrint("Sync Error (Courses): $e");
+    }
+
+    // Fetch Students
+    try {
+      if (Get.isRegistered<StudentManagementService>()) {
+        Get.find<StudentManagementService>().fetchAllStudents();
+      }
+    } catch (e) {
+      debugPrint("Sync Error (Students): $e");
+    }
+
+    debugPrint("Background sync completed (failures ignored).");
   }
 
   // Create profile from auth user if it doesn't exist

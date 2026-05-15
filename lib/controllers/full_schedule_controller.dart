@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_controller.dart';
@@ -23,6 +24,8 @@ class FullScheduleController extends GetxController {
       isLoading.value = true;
       final userId = authController.currentUser.value!.id;
       final connectivity = Get.find<ConnectivityService>();
+      final box = Hive.box('schedule');
+
       if (connectivity.isConnected.value) {
         // Online: fetch from API
         final response = await supabase
@@ -30,19 +33,21 @@ class FullScheduleController extends GetxController {
             .select('*, courses(id, course_name, course_code), rooms(*)')
             .eq('user_id', userId);
         // حفظ البيانات في Hive
-        final box = await Hive.openBox('schedule');
         await box.put('full_user_$userId', response);
         _groupByDay(response);
       } else {
         // Offline: جلب البيانات من Hive
-        final box = await Hive.openBox('schedule');
         final cached = box.get('full_user_$userId');
         if (cached != null) {
-          _groupByDay(List<Map<String, dynamic>>.from(cached));
+          _groupByDay(List<dynamic>.from(cached));
+        } else {
+          weeklySchedule.clear();
+          Get.snackbar("تنبيه", "لا توجد بيانات محفوظة",
+              snackPosition: SnackPosition.BOTTOM);
         }
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to load schedule");
+      debugPrint("Error fetching full schedule: $e");
     } finally {
       isLoading.value = false;
     }

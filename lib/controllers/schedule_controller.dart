@@ -18,7 +18,7 @@ class ScheduleController extends GetxController {
       await fetchUserSchedule();
     } else {
       // إذا كان غير متصل، خزّن محلياً وأضف لقائمة المزامنة
-      final box = await Hive.openBox('schedule');
+      final box = Hive.box('schedule');
       List<dynamic> cached = box.get('user_$userId') ?? [];
       cached.add(scheduleData);
       await box.put('user_$userId', cached);
@@ -53,6 +53,8 @@ class ScheduleController extends GetxController {
       if (userId == null) return;
 
       final connectivity = Get.find<ConnectivityService>();
+      final box = Hive.box('schedule');
+
       if (connectivity.isConnected.value) {
         // Online: fetch from API
         final List<dynamic> response = await supabase
@@ -65,32 +67,21 @@ class ScheduleController extends GetxController {
             .toList();
 
         // حفظ البيانات في Hive
-        final box = await Hive.openBox('schedule');
         await box.put('user_$userId', response);
 
         // مزامنة البيانات المؤجلة (إن وجدت)
         if (_pendingAdditions.isNotEmpty) {
           for (final item in _pendingAdditions) {
-            // مثال: إرسال البيانات المؤجلة إلى السيرفر
             await supabase.from('schedules').insert(item);
           }
           _pendingAdditions.clear();
         }
 
-        final today = [
-          'Sunday',
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday',
-        ][DateTime.now().weekday % 7];
+        final today = _getTodayName();
         schedules.value = all.where((s) => s.dayOfWeek == today).toList();
         _setUpcomingLecture();
       } else {
         // Offline: جلب البيانات من Hive
-        final box = await Hive.openBox('schedule');
         final cached = box.get('user_$userId');
         if (cached != null) {
           final List<ScheduleModel> all = (cached as List)
@@ -99,27 +90,35 @@ class ScheduleController extends GetxController {
                     ScheduleModel.fromJson(Map<String, dynamic>.from(item)),
               )
               .toList();
-          final today = [
-            'Sunday',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-          ][DateTime.now().weekday % 7];
+          final today = _getTodayName();
           schedules.value = all.where((s) => s.dayOfWeek == today).toList();
           _setUpcomingLecture();
+        } else {
+          schedules.clear();
+          Get.snackbar("تنبيه", "لا توجد بيانات محفوظة",
+              snackPosition: SnackPosition.BOTTOM);
         }
       }
     } catch (e) {
       debugPrint(
         '===== \nError fetching user schedule: in ScheduleController: $e',
       );
-      Get.snackbar("خطأ", "فشل جلب الجدول الدراسي: $e");
+      // No snackbar here if offline and failed, already handled or let it fail gracefully
     } finally {
       isLoading.value = false;
     }
+  }
+
+  String _getTodayName() {
+    return [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ][DateTime.now().weekday % 7];
   }
 
   void _setUpcomingLecture() {

@@ -22,7 +22,7 @@ class StudentManagementService extends GetxService {
     try {
       isLoading.value = true;
       final connectivity = Get.find<ConnectivityService>();
-      final box = await Hive.openBox('studentsBox');
+      final box = Hive.box('studentsBox');
 
       if (connectivity.isConnected.value) {
         final response = await supabase

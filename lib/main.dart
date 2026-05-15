@@ -27,6 +27,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  await Hive.openBox('auth');
+  await Hive.openBox('schedule');
+  await Hive.openBox('studentsBox');
+  await Hive.openBox('coursesBox');
   await initializeDateFormatting('ar', null);
 
   await Supabase.initialize(
