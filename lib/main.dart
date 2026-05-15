@@ -7,6 +7,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
+import 'package:musrshid_app/src/core/constants/app_constants.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 import 'package:musrshid_app/src/core/localization/app_translations.dart';
 import 'package:musrshid_app/src/core/services/notification_service.dart';
@@ -36,8 +37,8 @@ void main() async {
   await initializeDateFormatting('ar', null);
 
   await Supabase.initialize(
-    url: 'https://ieatgqyzhhminsuavsss.supabase.co',
-    anonKey: 'sb_publishable_WFtIIPKgfehm4ZVJM0l27w_6CD21t0v',
+    url: AppConstants.supabaseUrl,
+    anonKey: AppConstants.supabaseAnonKey,
   );
 
   await AwesomeNotifications().initialize(null, [
