@@ -1,6 +1,6 @@
 class AppAssets {
   // مسارات الصور والأيقونات (للتنظيم فقط)
-  static const String logo = 'assets/images/logo.png';
+  static const String logo = 'assets/images/logo_ui.jpg';
   static const String profilePlaceholder =
       'assets/images/profile_placeholder.png';
 }
