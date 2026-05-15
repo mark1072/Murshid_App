@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import 'package:musrshid_app/services/connectivity_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../controllers/auth_controller.dart';
 
 class NotificationController extends GetxController {
@@ -16,6 +18,25 @@ class NotificationController extends GetxController {
   Future<void> fetchNotifications() async {
     try {
       isLoading.value = true;
+      final connectivity = Get.find<ConnectivityService>();
+      if (connectivity.isConnected.value) {
+        // Online: fetch from API
+        final data = await supabase
+            .from('notifications')
+            .select('*, profiles(full_name)')
+            .order('created_at', ascending: true);
+        // حفظ البيانات في Hive
+        final box = await Hive.openBox('notifications');
+        await box.put('all', data);
+        notifications.assignAll(data);
+      } else {
+        // Offline: جلب البيانات من Hive
+        final box = await Hive.openBox('notifications');
+        final cached = box.get('all');
+        if (cached != null) {
+          notifications.assignAll(List<Map<String, dynamic>>.from(cached));
+        }
+      }
       final authController = Get.find<AuthController>();
       final currentUser = authController.currentUser.value;
 

@@ -75,16 +75,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkInternetAndNavigate() async {
-    final connectivityService = Get.find<ConnectivityService>();
-
-    final hasConnection = await connectivityService.hasConnection();
-
-    if (!hasConnection && mounted) {
-      _showNoInternetDialog();
-      return;
+    try {
+      final connectivityService = Get.find<ConnectivityService>();
+      // We check connection but we don't block the flow
+      await connectivityService.hasConnection();
+      await _navigateUser();
+    } catch (e) {
+      debugPrint('Error in splash screen navigation: $e');
+      if (mounted) {
+        Get.offAllNamed('/login');
+      }
     }
-
-    await _navigateUser();
   }
 
   Future<void> _navigateUser() async {

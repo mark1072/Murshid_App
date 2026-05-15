@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_controller.dart';
+import '../services/connectivity_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class FullScheduleController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -20,31 +23,31 @@ class FullScheduleController extends GetxController {
     try {
       isLoading.value = true;
       final userId = authController.currentUser.value!.id;
-      final role = authController.currentUser.value!.role;
+      final connectivity = Get.find<ConnectivityService>();
+      final box = Hive.box('schedule');
 
-      dynamic response;
-
-      if (role == 'student') {
-        // جلب جداول المواد التي سجل فيها الطالب (Enrollments)
-        response = await supabase
+      if (connectivity.isConnected.value) {
+        // Online: fetch from API
+        final response = await supabase
             .from('schedules')
-            .select(
-              '*, courses!inner(course_name, course_code, professor_id, enrollments!inner(student_id)), rooms(*)',
-            )
-            .eq('courses.enrollments.student_id', userId);
+            .select('*, courses(id, course_name, course_code), rooms(*)')
+            .eq('user_id', userId);
+        // حفظ البيانات في Hive
+        await box.put('full_user_$userId', response);
+        _groupByDay(response);
       } else {
-        // جلب جداول المواد التي يدرسها الدكتور
-        response = await supabase
-            .from('schedules')
-            .select(
-              '*, courses!inner(course_name, course_code, professor_id), rooms(*)',
-            )
-            .eq('courses.professor_id', userId);
+        // Offline: جلب البيانات من Hive
+        final cached = box.get('full_user_$userId');
+        if (cached != null) {
+          _groupByDay(List<dynamic>.from(cached));
+        } else {
+          weeklySchedule.clear();
+          Get.snackbar("تنبيه", "لا توجد بيانات محفوظة",
+              snackPosition: SnackPosition.BOTTOM);
+        }
       }
-
-      _groupByDay(response);
     } catch (e) {
-      Get.snackbar("Error", "Failed to load schedule");
+      debugPrint("Error fetching full schedule: $e");
     } finally {
       isLoading.value = false;
     }

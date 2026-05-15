@@ -23,9 +23,15 @@ import 'view/professor_notes_screen.dart';
 import 'view/signup_screen.dart';
 import 'view/student_home_screen.dart';
 import 'view/splash_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('auth');
+  await Hive.openBox('schedule');
+  await Hive.openBox('studentsBox');
+  await Hive.openBox('coursesBox');
 
   await initializeDateFormatting('ar', null);
 
@@ -45,16 +51,25 @@ void main() async {
     ),
   ]);
 
-  Get.put(AuthController(), permanent: true);
-  Get.put(NotificationService(), permanent: true);
-  Get.put(CourseService(), permanent: true);
-  Get.put(RoomService(), permanent: true);
-  Get.put(StudentManagementService(), permanent: true);
-  Get.put(ConnectivityService(), permanent: true);
-  await Get.putAsync<StorageService>(
-    () async => await StorageService().init(),
-    permanent: true,
-  );
+  try {
+    Get.put(AuthController(), permanent: true);
+    Get.put(NotificationService(), permanent: true);
+    Get.put(CourseService(), permanent: true);
+    Get.put(RoomService(), permanent: true);
+    Get.put(StudentManagementService(), permanent: true);
+    Get.put(ConnectivityService(), permanent: true);
+  } catch (e) {
+    debugPrint('Error putting services: $e');
+  }
+
+  try {
+    await Get.putAsync<StorageService>(
+      () async => await StorageService().init(),
+      permanent: true,
+    );
+  } catch (e) {
+    debugPrint('Error initializing StorageService: $e');
+  }
 
   final prefs = await SharedPreferences.getInstance();
   final lang = prefs.getString('lang') ?? 'ar';
@@ -134,6 +149,9 @@ class MurshidApp extends StatelessWidget {
 
 //new2@hotmil.com
 //new12345
+//omarnour@murshed.com --> student
+//omarabouzeid@murshed.com --> doctor
+//omar##123
 
 // to upload to github
 // git init

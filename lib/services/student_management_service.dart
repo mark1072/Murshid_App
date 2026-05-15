@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'connectivity_service.dart';
 
 class StudentManagementService extends GetxService {
   final supabase = Supabase.instance.client;
@@ -19,17 +21,34 @@ class StudentManagementService extends GetxService {
   Future<void> fetchAllStudents() async {
     try {
       isLoading.value = true;
-      final response = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('role', 'student')
-          .order('full_name');
+      final connectivity = Get.find<ConnectivityService>();
+      final box = Hive.box('studentsBox');
 
-      students.value = response
-          .map((item) => UserModel.fromJson(item))
-          .toList();
+      if (connectivity.isConnected.value) {
+        final response = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('role', 'student')
+            .order('full_name');
+        students.value = response
+            .map((item) => UserModel.fromJson(item))
+            .toList();
+        await box.put('all', response);
+      } else {
+        final cached = box.get('all');
+        if (cached != null) {
+          students.value = (cached as List)
+              .map(
+                (item) => UserModel.fromJson(Map<String, dynamic>.from(item)),
+              )
+              .toList();
+        } else {
+          students.value = [];
+        }
+      }
     } catch (e) {
       debugPrint('===== \nError fetching students: $e');
+      students.value = [];
     } finally {
       isLoading.value = false;
     }
