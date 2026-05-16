@@ -1,5 +1,5 @@
 // lib/views/auth/signup_screen.dart
-
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
@@ -17,7 +17,8 @@ class SignupScreen extends StatefulWidget {
   State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderStateMixin {
+class _SignupScreenState extends State<SignupScreen>
+    with SingleTickerProviderStateMixin {
   final authController = Get.find<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
@@ -95,10 +96,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                       ],
                     ),
                     child: ClipOval(
-                      child: Image.asset(
-                        AppAssets.logo,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset(AppAssets.logo, fit: BoxFit.cover),
                     ),
                   ),
                 ),
@@ -111,15 +109,9 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 24),
 
-                Text(
-                  'create_new_account'.tr,
-                  style: AppTheme.headingLarge,
-                ),
+                Text('create_new_account'.tr, style: AppTheme.headingLarge),
                 const SizedBox(height: 8),
-                Text(
-                  'join_murshid'.tr,
-                  style: AppTheme.bodySmall,
-                ),
+                Text('join_murshid'.tr, style: AppTheme.bodySmall),
                 const SizedBox(height: 32),
 
                 // Full Name Field
@@ -150,8 +142,9 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                   controller: _emailController,
                   prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
-                  validator: (v) =>
-                      GetUtils.isEmail(v!) ? null : 'please_enter_valid_email_short'.tr,
+                  validator: (v) => GetUtils.isEmail(v!)
+                      ? null
+                      : 'please_enter_valid_email_short'.tr,
                 ),
 
                 // Email Verification Hint
@@ -161,14 +154,15 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.blue.shade200,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.blue.shade200, width: 1),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, size: 16, color: Colors.blue.shade600),
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: Colors.blue.shade600,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -210,10 +204,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'already_have_account'.tr,
-                      style: AppTheme.bodySmall,
-                    ),
+                    Text('already_have_account'.tr, style: AppTheme.bodySmall),
                     GestureDetector(
                       onTap: () => Get.back(),
                       child: Text(

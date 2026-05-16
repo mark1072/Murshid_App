@@ -257,7 +257,27 @@ class AuthController extends GetxController {
 
   // تسجيل الخروج
   Future<void> logout() async {
-    await supabase.auth.signOut();
-    Get.offAllNamed('/login');
+    try {
+      final connectivity = Get.find<ConnectivityService>();
+
+      if (connectivity.isConnected.value) {
+        try {
+          await supabase.auth.signOut();
+        } catch (e) {
+          debugPrint('Error signing out from Supabase: $e');
+        }
+      }
+
+      // Clear local user data
+      currentUser.value = null;
+      await Get.find<StorageService>().clearAll();
+
+      Get.offAllNamed('/login');
+    } catch (e) {
+      debugPrint('Error during logout: $e');
+      // Force navigation to login even if there's an error
+      currentUser.value = null;
+      Get.offAllNamed('/login');
+    }
   }
 }

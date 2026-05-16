@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:musrshid_app/src/core/services/connectivity_service.dart';
 import 'package:musrshid_app/src/features/schedule/model/schedule_model.dart';
 
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
@@ -23,25 +25,45 @@ class ProfessorController extends GetxController {
   Future<void> fetchProfessorSchedule() async {
     try {
       isLoading.value = true;
-      final response = await supabase
-          .from('schedules')
-          .select('*, courses(*), rooms(*)')
-          .eq('user_id', _auth.currentUser.value!.id);
+      final userId = _auth.currentUser.value?.id;
+      if (userId == null) {
+        professorSchedules.clear();
+        return;
+      }
 
-      professorSchedules.value = response
-          .map((item) => ScheduleModel.fromJson(item))
-          .toList();
+      final connectivity = Get.find<ConnectivityService>();
+      final box = Hive.box('schedule');
+      final cacheKey = 'professor_schedule_$userId';
 
-      // final response = await supabase
-      //     .from('schedules')
-      //     .select('*, courses(*), rooms(*)')
-      //     .eq('courses.professor_id', _auth.currentUser.value!.id);
+      if (connectivity.isConnected.value) {
+        final response = await supabase
+            .from('schedules')
+            .select('*, courses(*), rooms(*)')
+            .eq('user_id', userId);
 
-      // debugPrint('===== \nProfessor schedule response: $response');
+        professorSchedules.value = response
+            .map((item) => ScheduleModel.fromJson(item))
+            .toList();
 
-      // professorSchedules.value = response
-      //     .map((item) => ScheduleModel.fromJson(item))
-      //     .toList();
+        await box.put(cacheKey, response);
+      } else {
+        final cached = box.get(cacheKey);
+        if (cached != null) {
+          professorSchedules.value = (cached as List)
+              .map(
+                (item) =>
+                    ScheduleModel.fromJson(Map<String, dynamic>.from(item)),
+              )
+              .toList();
+        } else {
+          professorSchedules.clear();
+          Get.snackbar(
+            'لا يوجد اتصال',
+            'عرض البيانات من النسخة المحفوظة في حالة الطوارئ',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      }
     } catch (e) {
       debugPrint('===== \nError fetching professor schedule: $e');
       Get.snackbar("خطأ", "فشل جلب الجدول");

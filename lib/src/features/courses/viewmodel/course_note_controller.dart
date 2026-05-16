@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:musrshid_app/src/core/services/connectivity_service.dart';
 import 'package:musrshid_app/src/features/courses/model/course_note_model.dart';
 import 'package:musrshid_app/src/core/services/notification_service.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
@@ -80,24 +82,58 @@ class CourseNoteController extends GetxController {
     try {
       isLoading.value = true;
       final professorId = _authController.currentUser.value!.id;
+      final connectivity = Get.find<ConnectivityService>();
+      final box = await Hive.openBox('professor_notes');
+      final cacheKey = 'professor_$professorId';
 
-      final response = await supabase
-          .from('course_notes')
-          .select('*')
-          .eq('professor_id', professorId)
-          .order('created_at', ascending: false);
+      if (connectivity.isConnected.value) {
+        final response = await supabase
+            .from('course_notes')
+            .select('*')
+            .eq('professor_id', professorId)
+            .order('created_at', ascending: false);
 
-      notes.value = response
-          .map((item) => CourseNoteModel.fromJson(item))
-          .toList();
+        notes.value = response
+            .map((item) => CourseNoteModel.fromJson(item))
+            .toList();
 
-      // عد الملاحظات غير المقروءة
+        await box.put(cacheKey, response);
+      } else {
+        final cached = box.get(cacheKey);
+        if (cached != null) {
+          notes.value = (cached as List)
+              .map(
+                (item) =>
+                    CourseNoteModel.fromJson(Map<String, dynamic>.from(item)),
+              )
+              .toList();
+        } else {
+          notes.clear();
+          Get.snackbar(
+            'لا يوجد اتصال',
+            'عرض الملاحظات من النسخة المحفوظة',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      }
+
       unreadNotesCount.value = notes.where((note) => !note.isRead).length;
     } catch (e) {
       debugPrint('Error fetching professor notes: $e');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> _saveNotesCache() async {
+    final professorId = _authController.currentUser.value?.id;
+    if (professorId == null) return;
+
+    final box = await Hive.openBox('professor_notes');
+    await box.put(
+      'professor_$professorId',
+      notes.map((note) => note.toJson()).toList(),
+    );
   }
 
   // الاستماع لالملاحظات الجديدة (Real-time)
@@ -153,6 +189,7 @@ class CourseNoteController extends GetxController {
           professorName: updatedNote.professorName,
         );
         unreadNotesCount.value--;
+        await _saveNotesCache();
       }
     } catch (e) {
       debugPrint('Error marking note as read: $e');
@@ -178,6 +215,8 @@ class CourseNoteController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      await _saveNotesCache();
     }
   }
 }
