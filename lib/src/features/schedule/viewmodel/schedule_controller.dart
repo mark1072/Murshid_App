@@ -57,10 +57,15 @@ class ScheduleController extends GetxController {
 
       if (connectivity.isConnected.value) {
         // Online: fetch from API
+
         final List<dynamic> response = await supabase
             .from('schedules')
-            .select('*, courses(id, course_name, course_code), rooms(*)')
-            .eq('user_id', userId);
+            // make inner join with courses and enrollments to filter by student_id
+            .select(
+              '*, courses(id, course_name, course_code, professor_id, enrollments(student_id)), rooms (*)',
+            )
+            // .select('*, courses(id, course_name, course_code), rooms(*)')
+            .eq('courses.enrollments.student_id', userId);
 
         final List<ScheduleModel> all = response
             .map((item) => ScheduleModel.fromJson(item))
@@ -105,6 +110,7 @@ class ScheduleController extends GetxController {
         schedules.value = todayResponse
             .map((item) => ScheduleModel.fromJson(item))
             .toList();
+        debugPrint('===== \nFetched today\'s schedule data: $todayResponse');
 
         // final List<dynamic> response = await supabase
         //     .from('schedules')

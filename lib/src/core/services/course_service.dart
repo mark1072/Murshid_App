@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
