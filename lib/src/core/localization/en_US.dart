@@ -87,6 +87,7 @@ const Map<String, String> enUS = {
   'day_thursday': 'Thursday',
   'no_lectures_on_day': 'No lectures on this day',
   'hall_label': 'Hall:',
+  'note_sent_successfully': 'Note sent successfully',
 
   // Notification Screen
   'notification_center': 'Notification Center',

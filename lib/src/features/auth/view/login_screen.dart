@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
 import 'package:musrshid_app/src/core/constants/app_theme.dart';
 import 'package:musrshid_app/src/core/constants/app_sizes.dart';
+import 'package:musrshid_app/src/core/constants/app_assets.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 import 'package:musrshid_app/src/core/widgets/language_toggle.dart';
 import 'package:musrshid_app/src/core/widgets/custom_widgets.dart';
@@ -73,13 +74,18 @@ class _LoginScreenState extends State<LoginScreen>
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.accent.withOpacity(0.2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.accent.withOpacity(0.2),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
                         ),
-                        child: Center(
-                          child: Icon(
-                            Icons.school,
-                            size: 60,
-                            color: AppColors.accent,
+                        child: ClipOval(
+                          child: Image.asset(
+                            AppAssets.logo,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),

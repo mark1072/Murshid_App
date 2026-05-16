@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +9,10 @@ import 'package:musrshid_app/src/core/services/connectivity_service.dart';
 class CourseService extends GetxService {
   final supabase = Supabase.instance.client;
 
+  final connectivity = Get.put<ConnectivityService>(
+    ConnectivityService(),
+    permanent: true,
+  );
   var courses = <CourseModel>[].obs;
   var isLoading = false.obs;
 
@@ -21,7 +26,7 @@ class CourseService extends GetxService {
   Future<void> fetchAllCourses() async {
     try {
       isLoading.value = true;
-      final connectivity = Get.find<ConnectivityService>();
+      // final connectivity = Get.find<ConnectivityService>();
       final box = Hive.box('coursesBox');
 
       if (connectivity.isConnected.value) {

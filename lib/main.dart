@@ -7,6 +7,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
+import 'package:musrshid_app/src/core/constants/app_constants.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 import 'package:musrshid_app/src/core/localization/app_translations.dart';
 import 'package:musrshid_app/src/core/services/notification_service.dart';
@@ -36,20 +37,18 @@ void main() async {
   await initializeDateFormatting('ar', null);
 
   await Supabase.initialize(
-    url: 'https://ieatgqyzhhminsuavsss.supabase.co',
-    anonKey: 'sb_publishable_WFtIIPKgfehm4ZVJM0l27w_6CD21t0v',
+    url: AppConstants.supabaseUrl,
+    anonKey: AppConstants.supabaseAnonKey,
   );
 
-  await AwesomeNotifications().initialize(null, [
-    NotificationChannel(
-      channelKey: 'alerts',
-      channelName: 'Murshid Alerts',
-      channelDescription: 'تنبيهات المحاضرات والجدول الدراسية',
-      defaultColor: AppColors.primary,
-      ledColor: Colors.white,
-      importance: NotificationImportance.Max,
-    ),
-  ]);
+  NotificationChannel(
+    channelKey: 'alerts',
+    channelName: 'Murshid Alerts',
+    channelDescription: 'تنبيهات المحاضرات والجدول الدراسية',
+    defaultColor: AppColors.primary,
+    ledColor: Colors.white,
+    importance: NotificationImportance.Max,
+  );
 
   try {
     Get.put(AuthController(), permanent: true);
@@ -94,10 +93,11 @@ class MurshidApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Murshid Smart Assistant',
       debugShowCheckedModeBanner: false,
-      translations: AppTranslations(),
+      title: 'Murshid Smart Assistant',
       locale: locale,
+      translations: AppTranslations(),
+
       fallbackLocale: const Locale('ar', 'EG'),
       theme: ThemeData(
         primaryColor: AppColors.primary,
@@ -138,8 +138,17 @@ class MurshidApp extends StatelessWidget {
 //student@murshid.com
 //student123456
 
+//mo@m.com
+//mo1234
+
+//mo2@m.com
+//mo1234
+
 //professor@murshid.com
 //prof123456
+
+//pro2@p.com
+//pro1234
 
 //ra@hotmil.com
 //new123

@@ -31,7 +31,19 @@ class ProfessorController extends GetxController {
       professorSchedules.value = response
           .map((item) => ScheduleModel.fromJson(item))
           .toList();
+
+      // final response = await supabase
+      //     .from('schedules')
+      //     .select('*, courses(*), rooms(*)')
+      //     .eq('courses.professor_id', _auth.currentUser.value!.id);
+
+      // debugPrint('===== \nProfessor schedule response: $response');
+
+      // professorSchedules.value = response
+      //     .map((item) => ScheduleModel.fromJson(item))
+      //     .toList();
     } catch (e) {
+      debugPrint('===== \nError fetching professor schedule: $e');
       Get.snackbar("خطأ", "فشل جلب الجدول");
     } finally {
       isLoading.value = false;
@@ -41,18 +53,37 @@ class ProfessorController extends GetxController {
   // إرسال تنبيه للطلاب
   Future<void> sendAlert(String title, String message, int courseId) async {
     try {
-      // Save notification to database
-      await supabase.from('notifications').insert({
-        'sender_id': _auth.currentUser.value!.id,
-        'title': title,
-        'message': message,
-        'course_id': courseId,
-      });
+      // Send notification to all students enrolled in the course
+      final studentsResponse = await supabase
+          .from('enrollments')
+          .select('student_id')
+          .eq('course_id', courseId);
+      final studentIds = studentsResponse
+          .map((item) => item['student_id'])
+          .toList();
 
+      for (final studentId in studentIds) {
+        await supabase.from('notifications').insert({
+          'sender_id': _auth.currentUser.value!.id,
+          'title': title,
+          'message': message,
+          'recipient_id': studentId,
+          'course_id': courseId,
+        });
+      }
+      // // Save notification to database
+      // await supabase.from('notifications').insert({
+      //   'sender_id': _auth.currentUser.value!.id,
+      //   'title': title,
+      //   'message': message,
+      //   'course_id': courseId,
+      // });
 
       Get.snackbar(
         "تم الإرسال",
-        "تم إرسال التنبيه لجميع الطلاب بنجاح",
+        // "تم إرسال التنبيه لجميع الطلاب بنجاح",
+        // "Alert sent successfully to students enrolled in the course",
+        'note_sent_successfully'.tr,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );

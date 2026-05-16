@@ -68,10 +68,15 @@ class AuthController extends GetxController {
 
         Get.snackbar("success".tr, "account_created_success".tr);
         // Navigate to course selection screen
-        Get.offAllNamed(
-          '/course_selection',
-          arguments: {'userId': res.user!.id, 'role': role},
-        );
+        if (role == 'student') {
+          Get.offAllNamed(
+            '/course_selection',
+            arguments: {'userId': res.user!.id, 'role': role},
+          );
+        } else if (role == 'professor') {
+          // go to professor home or dashboard
+          Get.offAllNamed('/login');
+        }
       }
     } on AuthException catch (e) {
       // Handle rate limit error with user-friendly message

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musrshid_app/src/core/constants/app_colors.dart';
+import 'package:musrshid_app/src/core/constants/app_assets.dart';
 import 'package:musrshid_app/src/features/auth/viewmodel/auth_controller.dart';
 import 'package:musrshid_app/src/features/auth/model/user_model.dart';
 import 'package:musrshid_app/src/core/services/connectivity_service.dart';
@@ -235,26 +236,10 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ],
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            AppColors.accent,
-                            AppColors.accent.withOpacity(0.8),
-                          ],
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'M',
-                          style: TextStyle(
-                            fontSize: 60,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                            fontFamily: 'Cairo',
-                          ),
-                        ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        AppAssets.logo,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
