@@ -95,7 +95,7 @@ class MurshidApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Murshid Smart Assistant',
+      title: 'Murshid',
       debugShowCheckedModeBanner: false,
       translations: AppTranslations(),
       locale: locale,
