@@ -31,7 +31,7 @@ class FullScheduleController extends GetxController {
         final response = await supabase
             .from('schedules')
             .select(
-              '*, courses!inner(course_name, course_code, enrollments!inner(student_id)), rooms(*)',
+              '*, courses!inner(course_name, course_code, professor_id, enrollments!inner(student_id)), rooms(*)',
             )
             .eq('courses.enrollments.student_id', userId);
         // حفظ البيانات في Hive

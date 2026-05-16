@@ -26,12 +26,24 @@ class ProfessorController extends GetxController {
       final response = await supabase
           .from('schedules')
           .select('*, courses(*), rooms(*)')
-          .eq('courses.professor_id', _auth.currentUser.value!.id);
+          .eq('user_id', _auth.currentUser.value!.id);
 
       professorSchedules.value = response
           .map((item) => ScheduleModel.fromJson(item))
           .toList();
+
+      // final response = await supabase
+      //     .from('schedules')
+      //     .select('*, courses(*), rooms(*)')
+      //     .eq('courses.professor_id', _auth.currentUser.value!.id);
+
+      // debugPrint('===== \nProfessor schedule response: $response');
+
+      // professorSchedules.value = response
+      //     .map((item) => ScheduleModel.fromJson(item))
+      //     .toList();
     } catch (e) {
+      debugPrint('===== \nError fetching professor schedule: $e');
       Get.snackbar("خطأ", "فشل جلب الجدول");
     } finally {
       isLoading.value = false;
