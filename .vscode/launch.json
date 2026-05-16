@@ -4,32 +4,26 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "Python Debugger: Current File",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
+
         {
             "name": "musrshid_app",
             "request": "launch",
             "type": "dart",
-            "program": "lib/src/main.dart"
+            "program": "lib/main.dart"
         },
         {
             "name": "musrshid_app (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "program": "lib/src/main.dart"
+            "program": "lib/main.dart"
         },
         {
             "name": "musrshid_app (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "program": "lib/src/main.dart"
+            "program": "lib/main.dart"
         }
     ]
 }
