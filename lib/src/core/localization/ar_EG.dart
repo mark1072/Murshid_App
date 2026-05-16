@@ -86,6 +86,7 @@ const Map<String, String> arEG = {
   'day_thursday': 'الخميس',
   'no_lectures_on_day': 'لا توجد محاضرات في هذا اليوم',
   'hall_label': 'قاعة:',
+  'note_sent_successfully': 'تم إرسال الملاحظة بنجاح',
 
   // Notification Screen
   'notification_center': 'مركز التنبيهات',

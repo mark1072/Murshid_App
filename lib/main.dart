@@ -95,6 +95,8 @@ class MurshidApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Murshid Smart Assistant',
+      locale: locale,
+      translations: AppTranslations(),
 
       fallbackLocale: const Locale('ar', 'EG'),
       theme: ThemeData(
@@ -136,8 +138,17 @@ class MurshidApp extends StatelessWidget {
 //student@murshid.com
 //student123456
 
+//mo@m.com
+//mo1234
+
+//mo2@m.com
+//mo1234
+
 //professor@murshid.com
 //prof123456
+
+//pro2@p.com
+//pro1234
 
 //ra@hotmil.com
 //new123
