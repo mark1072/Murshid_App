@@ -76,7 +76,7 @@ class FullScheduleScreen extends StatelessWidget {
               lecture['courses']['course_name'],
               lecture['courses']['course_code'],
               lecture['course_id'],
-              lecture['courses']['professor_id'],
+              lecture['user_id'],
               courseNoteController,
             );
           },
